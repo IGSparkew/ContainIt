@@ -1,0 +1,9 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+[data-theme="lofi"] {
+  color-scheme: light;
+}
+
+
+

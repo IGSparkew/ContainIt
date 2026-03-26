@@ -1,0 +1,13 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      # Accès au socket Docker pour gérer les conteneurs
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Persistance du db.json
+      - ./data:/app/data
+    restart: unless-stopped
+    environment:
+      - DOCKER_SOCKET=/var/run/docker.sock

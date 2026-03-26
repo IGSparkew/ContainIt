@@ -1,0 +1,115 @@
+@baseUrl = http://localhost:3000/api
+
+### Lister toutes les instances
+GET {{baseUrl}}/instances
+Content-Type: application/json
+
+###
+
+### Créer une instance PostgreSQL
+# @name createPostgres
+POST {{baseUrl}}/instances
+Content-Type: application/json
+
+{
+  "name": "pg-dev",
+  "type": "postgres",
+  "port": 5432,
+  "password": "password123",
+  "version": "16"
+}
+
+###
+
+### Créer une instance MySQL
+# @name createMysql
+POST {{baseUrl}}/instances
+Content-Type: application/json
+
+{
+  "name": "mysql-dev",
+  "type": "mysql",
+  "port": 3306,
+  "password": "password123",
+  "version": "8.0"
+}
+
+###
+
+### Créer une instance MongoDB
+# @name createMongo
+POST {{baseUrl}}/instances
+Content-Type: application/json
+
+{
+  "name": "mongo-dev",
+  "type": "mongo",
+  "port": 27017,
+  "password": "password123",
+  "version": "7"
+}
+
+###
+
+### Créer une instance Redis
+# @name createRedis
+POST {{baseUrl}}/instances
+Content-Type: application/json
+
+{
+  "name": "redis-dev",
+  "type": "redis",
+  "port": 6379,
+  "password": "password123",
+  "version": "7"
+}
+
+###
+
+### Démarrer l'instance PostgreSQL créée (id récupéré automatiquement)
+POST {{baseUrl}}/instances/{{createPostgres.response.body.$.id}}/start
+Content-Type: application/json
+
+###
+
+### Arrêter l'instance PostgreSQL créée
+POST {{baseUrl}}/instances/{{createPostgres.response.body.$.id}}/stop
+Content-Type: application/json
+
+###
+
+### Supprimer l'instance PostgreSQL créée
+DELETE {{baseUrl}}/instances/{{createPostgres.response.body.$.id}}
+Content-Type: application/json
+
+### Supprimer l'instance Mysql créée
+DELETE {{baseUrl}}/instances/{{createMysql.response.body.$.id}}
+Content-Type: application/json
+
+### Supprimer l'instance Redis créée
+DELETE {{baseUrl}}/instances/{{createRedis.response.body.$.id}}
+Content-Type: application/json
+
+### Supprimer l'instance Mongo créée
+DELETE {{baseUrl}}/instances/{{createMongo.response.body.$.id}}
+Content-Type: application/json
+
+### Stop mysql container
+GET {{baseUrl}}/instances/{{createMysql.response.body.$.id}}/stop
+Content-Type: application/json
+            
+### Start mysql container
+GET {{baseUrl}}/instances/{{createMysql.response.body.$.id}}/start
+Content-Type: application/json
+
+### Stats mysql container
+GET {{baseUrl}}/instances/{{createMysql.response.body.$.id}}/stats
+Content-Type: application/json
+
+### Get instances
+GET {{baseUrl}}/instances
+Content-Type: application/json
+
+### Get instance MYSQL
+GET {{baseUrl}}/instances/{{createMysql.response.body.$.id}}
+Content-Type: application/json
