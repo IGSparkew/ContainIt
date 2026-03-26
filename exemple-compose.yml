@@ -1,0 +1,12 @@
+services:
+  containit:
+    image: sparkew/containit:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - ${DOCKER_SOCKET:-/var/run/docker.sock}:/var/run/docker.sock
+      - ./data:/app/data
+    environment:
+      - DOCKER_HOST=${DOCKER_HOST:-}
+      - DOCKER_PORT=${DOCKER_PORT:-2375}
+    restart: unless-stopped

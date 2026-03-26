@@ -39,12 +39,19 @@ export class DockerService {
   private docker: Dockerode
 
   constructor() {
-      this.docker = new Dockerode(
-    process.env.DOCKER_SOCKET
-      ? { socketPath: process.env.DOCKER_SOCKET }
-      : { socketPath: '/var/run/docker.sock' }
-  )
+      this.docker = new Dockerode(this.getDockerConfig())
   }
+
+  private getDockerConfig(): Dockerode.DockerOptions {
+  if (process.env.DOCKER_HOST) {
+    return {
+      host: process.env.DOCKER_HOST,
+      port: parseInt(process.env.DOCKER_PORT ?? '2375')
+    }
+  }
+
+  return { socketPath: '/var/run/docker.sock' }
+}
 
   // Pull l'image si elle n'est pas présente localement
   private async pullImage(image: string): Promise<void> {
