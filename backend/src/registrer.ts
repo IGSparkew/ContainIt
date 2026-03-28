@@ -4,9 +4,11 @@ import { DockerService } from "./services/dockerService.js";
 import { ValidationService } from "./services/validationService.js";
 import { InstanceController } from "./controller/instance.js";
 import { DockerController } from "./controller/docker.js";
+import { InstanceService } from "./services/instanceService.js";
 
 
 container.registerSingleton(DbService);
+container.registerSingleton(InstanceService);
 container.registerSingleton(DockerService);
 container.registerSingleton(ValidationService);
 
