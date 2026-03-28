@@ -23,6 +23,11 @@ export class VolumesService {
         return this.db.data.volumes.find(v => v.id == id);
     }
 
+    getByContainerId(containerId: string) {
+        this.db.read();
+        return this.db.data.volumes.find(v => v.containerId == containerId);
+    }
+
     update(id: string, data : Partial<Volume>) : Volume {
         this.db.read();
         const index = this.db.data.volumes.findIndex(v => v.id == id);

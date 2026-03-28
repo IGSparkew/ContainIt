@@ -161,7 +161,7 @@ export class DockerService {
   }
 
   // Arrête et supprime un conteneur
-  async deleteInstance(containerId: string): Promise<void> {
+  async deleteInstance(containerId: string, keepVolume: boolean, volumeName?:string): Promise<void> {
     const container = this.docker.getContainer(containerId)
 
     // On tente le stop mais on continue même s'il est déjà arrêté
@@ -169,6 +169,10 @@ export class DockerService {
       await container.stop()
     } catch {
       // Conteneur déjà arrêté — pas grave
+    }
+
+    if (!keepVolume && volumeName !== undefined ) {
+      this.docker.getVolume(volumeName).remove();
     }
 
     await container.remove()
