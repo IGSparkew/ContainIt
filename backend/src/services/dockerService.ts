@@ -102,7 +102,7 @@ export class DockerService {
   }
 
   // Crée un conteneur
-  async createInstance(config: CreateInstanceInput, volumeId: string): Promise<CreateInstanceResult> {
+  async createInstance(config: CreateInstanceInput, volumeId: string, isAlreadyCreatedVolume: boolean, existingVolumeName?: string): Promise<CreateInstanceResult> {
     const imageName = IMAGE_NAMES[config.type]
     const imageTag = config.version ?? 'latest'
     const fullImage = `${imageName}:${imageTag}`
@@ -114,8 +114,13 @@ export class DockerService {
       await this.pullImage(fullImage)
       console.log(`Image ${fullImage} prête`)
     }
-
-    const volumeName = await this.createVolume(`${config.name}-${volumeId}-volume`);
+    
+    let volumeName = "";
+    if (!isAlreadyCreatedVolume) {
+      volumeName = await this.createVolume(`${config.name}-${volumeId}-volume`);
+    } else {
+      volumeName = this.docker.getVolume(existingVolumeName!).name;
+    }
 
     // Crée le conteneur
     const container = await this.docker.createContainer({

@@ -3,7 +3,7 @@ import { DbService } from "../services/dbService.js";
 import { ValidationService } from "../services/validationService.js";
 import { DockerService } from "../services/dockerService.js";
 import { Context } from "hono";
-import { CreateInstanceInput, DeleteInstanceSchema } from "../schemas/Instance.js";
+import { CreateInstanceInput } from "../schemas/Instance.js";
 import { Instance } from "../models/instance.js";
 import { InstanceService } from "../services/instanceService.js";
 import { Volume } from "../models/volumes.js";
@@ -100,7 +100,7 @@ export class InstanceController {
 
     async deleteInstance(c: Context) {
          const id = c.req.param('id');
-         const body = await c.req.json<DeleteInstanceSchema>();
+         const keepVolume = c.req.param('keepVolume') === 'true';
         if (!id) {
              return c.json({"message": "Error wrong id"});
         }
@@ -119,12 +119,12 @@ export class InstanceController {
             await this.dockerService.stopInstance(instance.containerId);
         }
 
-        await this.dockerService.deleteInstance(instance.containerId, body.keepVolume, volumeName);
+        await this.dockerService.deleteInstance(instance.containerId, keepVolume, volumeName);
 
         this.instanceService.remove(instance.id);
 
         if (volume !== undefined) {
-            if (body.keepVolume) {
+            if (keepVolume) {
                 this.volumeService.unlinkVolume(volume.id);
             } else {
                 this.volumeService.remove(volume.id);

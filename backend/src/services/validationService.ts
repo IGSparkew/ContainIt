@@ -4,6 +4,7 @@ import { InstanceStatus, InstanceType } from '../models/instance.js'
 
 import * as net from 'net'
 import { InstanceService } from './instanceService.js'
+import { VolumesService } from './volumesService.js'
 
 const SUPPORTED_IMAGES: InstanceType[] = ['postgres', 'mysql', 'mongo', 'redis']
 const NAME_REGEX = /^[a-zA-Z0-9-_]+$/
@@ -11,7 +12,8 @@ const NAME_REGEX = /^[a-zA-Z0-9-_]+$/
 @injectable()
 export class ValidationService {
   constructor(
-    @inject(InstanceService) private instanceService: InstanceService
+    @inject(InstanceService) private instanceService: InstanceService,
+    @inject(VolumesService) private volumeService: VolumesService
   ) {}
 
   // Port entre 1024 et 65535
@@ -90,5 +92,24 @@ export class ValidationService {
         `Action impossible — l'instance est "${instance.status}", statut attendu : "${expected}"`
       )
     }
+  }
+
+  checkVolumeExist(id: string) {
+    const volume = this.volumeService.getById(id)
+    if (!volume) {
+      throw new Error(`Volume "${id}" introuvable`)
+    }
+  }
+
+  checkVolumeOrphan(id: string) {
+    const volume = this.volumeService.getById(id);
+    if (!volume) {
+       throw new Error(`Volume "${id}" introuvable`)
+    }
+
+    if (!volume.orphan) {
+      throw new Error (`Action impossible le volume ${id} est déjà lié à une autre instance`);
+    }
+    
   }
 }

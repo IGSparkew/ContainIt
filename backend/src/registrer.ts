@@ -5,6 +5,7 @@ import { ValidationService } from "./services/validationService.js";
 import { InstanceController } from "./controller/instance.js";
 import { DockerController } from "./controller/docker.js";
 import { InstanceService } from "./services/instanceService.js";
+import { VolumeController } from "./controller/volume.js";
 
 
 container.registerSingleton(DbService);
@@ -14,5 +15,6 @@ container.registerSingleton(ValidationService);
 
 container.registerSingleton(InstanceController);
 container.registerSingleton(DockerController);
+container.registerSingleton(VolumeController);
 
 export {container}
