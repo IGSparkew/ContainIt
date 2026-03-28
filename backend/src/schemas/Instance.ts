@@ -5,7 +5,8 @@ export const createInstanceSchema = z.object({
   type: z.enum(['postgres', 'mysql', 'mongo', 'redis']),
   port: z.number().int().min(1024).max(65535),
   password: z.string().min(6),
-  version: z.string().optional()
+  version: z.string().optional(),
+  volumeId: z.string().optional()
 })
 
 export const updateInstanceSchema = z.object({
