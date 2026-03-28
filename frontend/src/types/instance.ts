@@ -14,5 +14,6 @@ export interface InstanceForm {
   name: string | undefined,
   type: InstanceType | undefined,
   port: number | undefined,
-  password: string | undefined
+  password: string | undefined,
+  volumeId: string | undefined
 }

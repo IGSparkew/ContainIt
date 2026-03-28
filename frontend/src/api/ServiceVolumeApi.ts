@@ -9,7 +9,6 @@ export class ServiceVolumeApi {
         this.pathServer = "/api";
     }
 
-
     async fetchOrphanVolumes() : Promise<Volume[]> {
         const response = await fetch(`${this.pathServer}/volumes`);
         if (!response.ok) {
@@ -17,7 +16,5 @@ export class ServiceVolumeApi {
         }
 
         return response.json()
-    } 
-
-
+    }
 }
