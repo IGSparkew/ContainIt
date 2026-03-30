@@ -100,7 +100,7 @@ export class InstanceController {
 
     async deleteInstance(c: Context) {
          const id = c.req.param('id');
-         const keepVolume = c.req.param('keepVolume') === 'true';
+         const keepVolume = c.req.query('keepVolume') === 'true';
         if (!id) {
              return c.json({"message": "Error wrong id"});
         }

@@ -176,11 +176,11 @@ export class DockerService {
       // Conteneur déjà arrêté — pas grave
     }
 
-    if (!keepVolume && volumeName !== undefined ) {
-      this.docker.getVolume(volumeName).remove();
-    }
+    await container.remove();
 
-    await container.remove()
+    if (!keepVolume && volumeName !== undefined ) {
+      await this.docker.getVolume(volumeName).remove();
+    }
   }
 
   // Récupère le statut live depuis Docker

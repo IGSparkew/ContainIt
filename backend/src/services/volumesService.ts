@@ -63,7 +63,7 @@ export class VolumesService {
     remove(id: string) {
         this.db.read();
         this.db.data.volumes = this.db.data.volumes.filter(v => v.id !== id);
-        this.db.write;
+        this.db.write();
     } 
 
 }

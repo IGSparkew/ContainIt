@@ -1,6 +1,6 @@
 <script lang="ts">
     import StatsCard from "./StatsCard.svelte";
-    import { instanceStore } from "../stores/store";
+    import { instanceStore } from "../stores/instanceStore";
     
     const {stats} = instanceStore;
 
