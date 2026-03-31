@@ -1,10 +1,11 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { instanceStore } from "../stores/store";
+    import { instanceStore } from "../stores/instanceStore";
     import InstanceToolbar from "./InstanceToolbar.svelte";
     import InstanceRow from "./instanceRow.svelte";
+    import { openDeleteConfirmModal } from "../stores/storeModal";
 
-    const { isLoading, error } = instanceStore
+    const { isLoading, error, instancesIdToDelete } = instanceStore
 
     onMount(() => {
         instanceStore.fetchAllInstances()
@@ -21,7 +22,8 @@
     }
 
     function deleteInstances() {
-        selectedRows.forEach(id => instanceStore.deleteInstance(id))
+        instancesIdToDelete.set([...selectedRows]);
+        openDeleteConfirmModal.set(true);
         selectedRows = []
     }
 </script>

@@ -3,6 +3,8 @@ import { DbService } from './dbService.js'
 import { InstanceStatus, InstanceType } from '../models/instance.js'
 
 import * as net from 'net'
+import { InstanceService } from './instanceService.js'
+import { VolumesService } from './volumesService.js'
 
 const SUPPORTED_IMAGES: InstanceType[] = ['postgres', 'mysql', 'mongo', 'redis']
 const NAME_REGEX = /^[a-zA-Z0-9-_]+$/
@@ -10,7 +12,8 @@ const NAME_REGEX = /^[a-zA-Z0-9-_]+$/
 @injectable()
 export class ValidationService {
   constructor(
-    @inject(DbService) private db: DbService
+    @inject(InstanceService) private instanceService: InstanceService,
+    @inject(VolumesService) private volumeService: VolumesService
   ) {}
 
   // Port entre 1024 et 65535
@@ -40,7 +43,7 @@ export class ValidationService {
 
   // Nom unique dans db.json
   checkNameUnique(name: string): void {
-    const existing = this.db.getAll().find(i => i.name === name)
+    const existing = this.instanceService.getAll().find(i => i.name === name)
     if (existing) {
       throw new Error(`Une instance avec le nom "${name}" existe déjà`)
     }
@@ -72,7 +75,7 @@ export class ValidationService {
 
   // Instance existante dans db.json
   checkInstanceExists(id: string): void {
-    const instance = this.db.getById(id)
+    const instance = this.instanceService.getById(id)
     if (!instance) {
       throw new Error(`Instance "${id}" introuvable`)
     }
@@ -80,7 +83,7 @@ export class ValidationService {
 
   // Statut cohérent avec l'action demandée
   checkInstanceStatus(id: string, expected: InstanceStatus): void {
-    const instance = this.db.getById(id)
+    const instance = this.instanceService.getById(id)
     if (!instance) {
       throw new Error(`Instance "${id}" introuvable`)
     }
@@ -89,5 +92,24 @@ export class ValidationService {
         `Action impossible — l'instance est "${instance.status}", statut attendu : "${expected}"`
       )
     }
+  }
+
+  checkVolumeExist(id: string) {
+    const volume = this.volumeService.getById(id)
+    if (!volume) {
+      throw new Error(`Volume "${id}" introuvable`)
+    }
+  }
+
+  checkVolumeOrphan(id: string) {
+    const volume = this.volumeService.getById(id);
+    if (!volume) {
+       throw new Error(`Volume "${id}" introuvable`)
+    }
+
+    if (!volume.orphan) {
+      throw new Error (`Action impossible le volume ${id} est déjà lié à une autre instance`);
+    }
+    
   }
 }

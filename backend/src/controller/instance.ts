@@ -5,10 +5,16 @@ import { DockerService } from "../services/dockerService.js";
 import { Context } from "hono";
 import { CreateInstanceInput } from "../schemas/Instance.js";
 import { Instance } from "../models/instance.js";
+import { InstanceService } from "../services/instanceService.js";
+import { Volume } from "../models/volumes.js";
+import { fa } from "zod/locales";
+import { VolumesService } from "../services/volumesService.js";
+
 
 @injectable()
 export class InstanceController {
-    constructor(@inject(DbService) private db :DbService, 
+    constructor(@inject(InstanceService) private instanceService :InstanceService,
+    @inject(VolumesService) private volumeService: VolumesService, 
     @inject(ValidationService) private validationService: ValidationService, 
     @inject(DockerService) private dockerService: DockerService
     ) {}
@@ -18,7 +24,7 @@ export class InstanceController {
         if (!id) {
              return c.json({"message": "Error wrong id"});
         }
-        const instance = this.db.getById(id);
+        const instance = this.instanceService.getById(id);
         if (!instance) {
             return c.json({"message": "Error wrong id"});
         }
@@ -26,7 +32,7 @@ export class InstanceController {
     }
 
     getAllInstance(c:  Context) {
-        const instances = this.db.getAll();
+        const instances = this.instanceService.getAll();
         return c.json(instances, 200);
     }
 
@@ -34,15 +40,45 @@ export class InstanceController {
          const body = await c.req.json<CreateInstanceInput>();
         
             // 1. Validation
-            await this.validationService.checkPortRange(body.port)
-            await this.validationService.checkPortAvailable(body.port)
-            this.validationService.checkNameUnique(body.name)
-            this.validationService.checkImageSupported(body.type)
-            this.validationService.checkPasswordStrength(body.password)
-        
-            // 2. Création du conteneur Docker
-            const containerId = await this.dockerService.createInstance(body)
-        
+            await this.validationService.checkPortRange(body.port);
+            await this.validationService.checkPortAvailable(body.port);
+            this.validationService.checkNameUnique(body.name);
+            this.validationService.checkImageSupported(body.type);
+            this.validationService.checkPasswordStrength(body.password);
+
+
+            let volumeId = crypto.randomUUID();
+            let createInstanceResult;
+
+            if (body.volumeId !== undefined) {
+                // get the volume in volume service
+                // rename it 
+                let orphanVolume = this.volumeService.getById(body.volumeId);
+
+                if (!orphanVolume) {
+                    return c.json("Error volume not found", 404);
+                }
+
+                // 2. Création du conteneur Docker
+                createInstanceResult = await this.dockerService.createInstance(body, volumeId, true, orphanVolume?.name)
+
+                this.volumeService.linkVolume(orphanVolume?.id, createInstanceResult.containerId);
+
+            } else {
+                // 2. Création du conteneur Docker
+                createInstanceResult = await this.dockerService.createInstance(body, volumeId, false, undefined);
+                const volume: Volume = {
+                    id: volumeId,
+                    name: createInstanceResult.volumeName,
+                    type: body.type,
+                    containerId: createInstanceResult.containerId,
+                    createdAt: new Date().toISOString(),
+                    orphan: false
+                };
+                this.volumeService.save(volume);
+
+            }
+
             // 2. Sauvegarde dans db.json
             const instance: Instance = {
               id: crypto.randomUUID(),
@@ -51,12 +87,12 @@ export class InstanceController {
               image: `${body.type}:${body.version ?? 'latest'}`,
               port: body.port,
               password: body.password,
-              containerId: containerId,
+              containerId: createInstanceResult.containerId,
               status: 'stopped',
               createdAt: new Date().toISOString()
             }
         
-            this.db.save(instance);
+            this.instanceService.save(instance);
         
         
             return c.json(instance, 201);
@@ -64,13 +100,18 @@ export class InstanceController {
 
     async deleteInstance(c: Context) {
          const id = c.req.param('id');
+         const keepVolume = c.req.query('keepVolume') === 'true';
         if (!id) {
              return c.json({"message": "Error wrong id"});
         }
-        const instance = this.db.getById(id);
+        const instance = this.instanceService.getById(id);
         if (!instance) {
             return c.json({"message": "Error wrong id"});
         }
+
+        const volume = this.volumeService.getByContainerId(instance.containerId);
+        
+        const volumeName = volume !== undefined ? volume.name : undefined;
 
         const statusContainer = await this.dockerService.getStatus(instance.containerId);
 
@@ -78,9 +119,18 @@ export class InstanceController {
             await this.dockerService.stopInstance(instance.containerId);
         }
 
-        await this.dockerService.deleteInstance(instance.containerId);
+        await this.dockerService.deleteInstance(instance.containerId, keepVolume, volumeName);
 
-        this.db.remove(instance.id);
+        this.instanceService.remove(instance.id);
+
+        if (volume !== undefined) {
+            if (keepVolume) {
+                this.volumeService.unlinkVolume(volume.id);
+            } else {
+                this.volumeService.remove(volume.id);
+            }
+
+        }
 
         return c.json({"message":"remove instance with id: " + id}, 200);
     }

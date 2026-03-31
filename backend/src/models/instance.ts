@@ -12,3 +12,8 @@ export interface Instance {
   status: InstanceStatus
   createdAt: string
 }
+
+export type CreateInstanceResult = {
+  containerId: string,
+  volumeName: string
+}

@@ -11,6 +11,7 @@ function createInstanceStore() {
     const stats = writable<Stats | null>(null); 
     const isLoading = writable<boolean>(false);
     const error = writable<string | null>(null);
+    const instancesIdToDelete = writable<string[]>([]);
 
     async function fetchAllInstances() {
         isLoading.set(true);
@@ -38,11 +39,11 @@ function createInstanceStore() {
         }
     }
 
-    async function deleteInstance(id: string) {
+    async function deleteInstance(id: string, keepvolume: boolean) {
         isLoading.set(true);
         error.set(null);
         try {
-            await api.deleteInstance(id);
+            await api.deleteInstance(id, keepvolume);
             update(list => list.filter(l => l.id !== id));
         } catch (e) {
             error.set(e instanceof Error ? e.message : "Unknown Error");
@@ -85,6 +86,7 @@ function createInstanceStore() {
         isLoading,
         error,
         stats,
+        instancesIdToDelete,
         fetchAllInstances,
         addInstance,
         deleteInstance,

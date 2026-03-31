@@ -3,10 +3,11 @@ import { DbService } from "../services/dbService.js";
 import { DockerService } from "../services/dockerService.js";
 import { Context } from "hono";
 import { Stats } from '../models/stats.js';
+import { InstanceService } from "../services/instanceService.js";
 
 @injectable()
 export class DockerController {
-    constructor(@inject(DbService) private db :DbService,
+    constructor(@inject(InstanceService) private instanceService :InstanceService,
     @inject(DockerService) private dockerService: DockerService
     ) {}
 
@@ -18,7 +19,7 @@ export class DockerController {
             return c.json({"message": "Error wrong id"});
         }
 
-        const instance = this.db.getById(id);
+        const instance = this.instanceService.getById(id);
         if (!instance) {
             return c.json({"instance not found": 404});
         }
@@ -29,7 +30,7 @@ export class DockerController {
     
         await this.dockerService.startInstance(instance.containerId);
     
-        const updatedInstance = this.db.update(instance.id, {status: 'running'});
+        const updatedInstance = this.instanceService.update(instance.id, {status: 'running'});
     
         return c.json(updatedInstance, 200);
     }
@@ -41,7 +42,7 @@ export class DockerController {
              return c.json({"message": "Error wrong id"});
         }
         
-        const instance = this.db.getById(id);
+        const instance = this.instanceService.getById(id);
 
         if (!instance) {
             return c.json({"instance not found": 404});
@@ -53,7 +54,7 @@ export class DockerController {
     
         await this.dockerService.stopInstance(instance.containerId);
     
-        const updatedInstance = this.db.update(instance.id, {status: 'stopped'});
+        const updatedInstance = this.instanceService.update(instance.id, {status: 'stopped'});
     
         return c.json(updatedInstance, 200);
     }
@@ -65,7 +66,7 @@ export class DockerController {
              return c.json({"message": "Error wrong id"});
         }
 
-        const instance = this.db.getById(id);
+        const instance = this.instanceService.getById(id);
         if (!instance) {
             return c.json({"instance not found": 404});
         }
