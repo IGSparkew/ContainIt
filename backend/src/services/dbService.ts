@@ -3,8 +3,9 @@ import { JSONFileSync } from 'lowdb/node'
 import { Instance } from '../models/instance.js'
 import { LowSync } from 'lowdb'
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs'
+import { Volume } from '../models/volumes.js'
 
-type DbData = { instances: Instance[] }
+export type DbData = { instances: Instance[], volumes: Volume[] }
 const path = 'data/db.json'
 
 @injectable()
@@ -22,44 +23,16 @@ export class DbService {
   }
 
   if (!existsSync(path)) {
-    writeFileSync(path, '{ "instances": [] }', { encoding: 'utf8' })
+    writeFileSync(path, '{ "instances": [], "volumes": [] }', { encoding: 'utf8' })
   }
 
 
     const adapter = new JSONFileSync<DbData>(path)
-    this.db = new LowSync(adapter, { instances: [] })
+    this.db = new LowSync(adapter, { instances: [], volumes: [] })
     this.db.read()
   }
 
-  getAll(): Instance[] {
-    this.db.read()
-    return this.db.data.instances
-  }
-
-  getById(id: string): Instance | undefined {
-    this.db.read()
-    return this.db.data.instances.find(i => i.id === id)
-  }
-
-  save(instance: Instance): Instance {
-    this.db.read()
-    this.db.data.instances.push(instance)
-    this.db.write()
-    return instance
-  }
-
-  update(id: string, data: Partial<Instance>): Instance {
-    this.db.read()
-    const index = this.db.data.instances.findIndex(i => i.id === id)
-    if (index === -1) throw new Error(`Instance ${id} introuvable`)
-    this.db.data.instances[index] = { ...this.db.data.instances[index], ...data }
-    this.db.write()
-    return this.db.data.instances[index];
-  }
-
-  remove(id: string): void {
-    this.db.read()
-    this.db.data.instances = this.db.data.instances.filter(i => i.id !== id)
-    this.db.write()
+  getDb() {
+    return this.db;
   }
 }

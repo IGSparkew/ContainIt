@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Pause, Play } from "lucide-svelte";
     import type { InstanceStatus } from "../types/instance";
-    import { instanceStore } from "../stores/store";
+    import { instanceStore } from "../stores/instanceStore";
 
 
     type Props = {

@@ -1,7 +1,8 @@
 import { injectable } from 'tsyringe'
-import Dockerode from 'dockerode'
+import Dockerode, { Volume } from 'dockerode'
 import { CreateInstanceInput, UpdateInstanceInput } from '../schemas/Instance.js'
 import { Stats } from '../models/stats.js';
+import { CreateInstanceResult } from '../models/instance.js';
 
 
 // Variables d'env spécifiques à chaque type de BDD
@@ -24,7 +25,7 @@ const ENV_VARS: Record<string, (password: string) => string[]> = {
   ],
 }
 
-const ENV_NAME_INSTANCE = "db-dashboard-";
+const ENV_NAME_INSTANCE = "containit-";
 
 // Nom de l'image Docker pour chaque type
 const IMAGE_NAMES: Record<string, string> = {
@@ -50,7 +51,12 @@ export class DockerService {
     }
   }
 
-  return { socketPath: '/var/run/docker.sock' }
+  switch (process.platform) {
+    case 'win32':
+      return { socketPath: '//./pipe/docker_engine' }
+    default:
+      return { socketPath: '/var/run/docker.sock' }
+  }
 }
 
   // Pull l'image si elle n'est pas présente localement
@@ -78,8 +84,25 @@ export class DockerService {
     }
   }
 
-  // Crée et démarre un conteneur
-  async createInstance(config: CreateInstanceInput): Promise<string> {
+  private getDataPath(type: string): string {
+  const paths: Record<string, string> = {
+    postgres: '/var/lib/postgresql/data',
+    mysql:    '/var/lib/mysql',
+    mongo:    '/data/db',
+    redis:    '/data'
+  }
+  return paths[type]
+}
+
+  // Crée un volume 
+  private async createVolume(name :string) {
+    const volumeName = `${ENV_NAME_INSTANCE}${name}`; 
+    await this.docker.createVolume({Name: volumeName});
+    return volumeName;
+  }
+
+  // Crée un conteneur
+  async createInstance(config: CreateInstanceInput, volumeId: string, isAlreadyCreatedVolume: boolean, existingVolumeName?: string): Promise<CreateInstanceResult> {
     const imageName = IMAGE_NAMES[config.type]
     const imageTag = config.version ?? 'latest'
     const fullImage = `${imageName}:${imageTag}`
@@ -91,6 +114,13 @@ export class DockerService {
       await this.pullImage(fullImage)
       console.log(`Image ${fullImage} prête`)
     }
+    
+    let volumeName = "";
+    if (!isAlreadyCreatedVolume) {
+      volumeName = await this.createVolume(`${config.name}-${volumeId}-volume`);
+    } else {
+      volumeName = this.docker.getVolume(existingVolumeName!).name;
+    }
 
     // Crée le conteneur
     const container = await this.docker.createContainer({
@@ -98,6 +128,9 @@ export class DockerService {
       name: `${ENV_NAME_INSTANCE}${config.name}`,
       Env: ENV_VARS[config.type](config.password),
       HostConfig: {
+        Binds: [
+          `${volumeName}:${this.getDataPath(config.type)}`
+        ],
         PortBindings: {
           // Mappe le port interne du conteneur sur le port choisi par l'utilisateur
           [`${this.getInternalPort(config.type)}/tcp`]: [
@@ -114,7 +147,10 @@ export class DockerService {
       // Conteneur déjà arrêté — pas grave
     }
 
-    return container.id
+    return {
+      containerId: container.id,
+      volumeName
+    }
   }
 
   // Démarre un conteneur existant
@@ -130,7 +166,7 @@ export class DockerService {
   }
 
   // Arrête et supprime un conteneur
-  async deleteInstance(containerId: string): Promise<void> {
+  async deleteInstance(containerId: string, keepVolume: boolean, volumeName?:string): Promise<void> {
     const container = this.docker.getContainer(containerId)
 
     // On tente le stop mais on continue même s'il est déjà arrêté
@@ -140,7 +176,11 @@ export class DockerService {
       // Conteneur déjà arrêté — pas grave
     }
 
-    await container.remove()
+    await container.remove();
+
+    if (!keepVolume && volumeName !== undefined ) {
+      await this.docker.getVolume(volumeName).remove();
+    }
   }
 
   // Récupère le statut live depuis Docker

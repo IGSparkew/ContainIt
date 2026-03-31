@@ -41,8 +41,8 @@ export class ServiceInstanceApi {
         return response.json();
     }
 
-    async deleteInstance(id: string) : Promise<void> {
-       const response = await fetch(`${this.pathServer}/instances/${id}`, {
+    async deleteInstance(id: string, keepvolume: boolean) : Promise<void> {
+       const response = await fetch(`${this.pathServer}/instances/${id}?keepVolume=${keepvolume}`, {
             method: 'DELETE'
         });
         if (!response.ok) {

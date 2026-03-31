@@ -4,6 +4,7 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import './registrer.js'
 import { instancesRoute } from './routes/instances.js'
+import { volumeRoute } from './routes/volume.js'
 import { dockerRoute } from './routes/docker.js'
 import { serveStatic } from '@hono/node-server/serve-static'
 const app = new Hono()
@@ -23,6 +24,7 @@ app.onError((err, c) => {
 // Routes
 app.route('/api/instances', instancesRoute);
 app.route('/api/instances', dockerRoute);
+app.route('/api/volumes', volumeRoute);
 
 // Sert les fichiers du frontend
 app.use('/*', serveStatic({ root: './public' }))

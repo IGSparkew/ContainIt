@@ -1,25 +1,33 @@
 <script lang="ts">
-  import { instanceStore } from "../stores/store";
-  import { openModal } from "../stores/storeModal";
-    import { mongo_port_default, mysql_port_default, postegres_port_default, redis_port_default } from "../types/defaultFromValue";
+  import type { Volume } from "../types/volume";
+  import { instanceStore } from "../stores/instanceStore";
+  import { openCreationFormModal } from "../stores/storeModal";
+  import { mongo_port_default, mysql_port_default, postegres_port_default, redis_port_default } from "../types/defaultFromValue";
   import type { InstanceForm } from "../types/instance";
+  import { volumeStore } from "../stores/volumeStore";
+    import { onMount } from "svelte";
   
   let modal: HTMLDialogElement;
-
-  let isClosing = false
+   
+  let isClosing = false;
 
   function getDefaultForm(): InstanceForm {
     return {
       name: '',
       type: undefined,
       port: undefined,
-      password: ''
+      password: '',
+      volumeId: undefined
     }
   }
 
+  onMount(async () => {
+    await volumeStore.fetchOrphanVolumes();
+  });
+
 
   $effect(() => {
-    if ($openModal) {
+    if ($openCreationFormModal) {
       modal.showModal();
     } else {
       modal.close();
@@ -40,7 +48,7 @@
     if (isClosing) return;
     isClosing = true;
     form = getDefaultForm();
-    openModal.set(false);
+    openCreationFormModal.set(false);
     modal.close();
     isClosing = false;
   }
@@ -61,10 +69,11 @@
         form.port = redis_port_default;
         break;
     }
-    
   }
 
-  $inspect(form);
+  const orphanVolumes: Volume[] = $derived($volumeStore.filter(v => form.type != undefined && v.type == form.type));
+
+
 </script>
 
 <dialog bind:this={modal} class="modal" onclose={closeModal}>
@@ -80,6 +89,14 @@
         </select>
         <input class="input" type="number" min="1024"max="65535" bind:value={form.port} placeholder="Port of instance"/>
         <input class="input" type="password" bind:value={form.password} placeholder="Password of instance"/>
+        {#if orphanVolumes.length > 0}
+          <select class="select" bind:value={form.volumeId} placeholder="Orphan volumes">
+          <option value={undefined} disabled selected>Choose a volume</option>
+          {#each orphanVolumes as orphanVolume (orphanVolume.id)}
+          <option value={orphanVolume.id}>{orphanVolume.name}</option>
+          {/each}
+        </select>
+        {/if}
         <button class="btn btn-primary" type="submit">Create Instance</button>
     </form>
   </div>
