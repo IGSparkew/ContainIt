@@ -5,7 +5,6 @@ import { InstanceStatus, InstanceType } from '../models/instance.js'
 import * as net from 'net'
 import { InstanceService } from './instanceService.js'
 import { VolumesService } from './volumesService.js'
-import { NetworksService } from './networksService.js'
 
 const SUPPORTED_IMAGES: InstanceType[] = ['postgres', 'mysql', 'mongo', 'redis']
 const NAME_REGEX = /^[a-zA-Z0-9-_]+$/
@@ -14,8 +13,7 @@ const NAME_REGEX = /^[a-zA-Z0-9-_]+$/
 export class ValidationService {
   constructor(
     @inject(InstanceService) private instanceService: InstanceService,
-    @inject(VolumesService) private volumeService: VolumesService,
-    @inject(NetworksService) private networksService: NetworksService
+    @inject(VolumesService) private volumeService: VolumesService
   ) {}
 
   // Port entre 1024 et 65535
@@ -112,30 +110,6 @@ export class ValidationService {
     if (!volume.orphan) {
       throw new Error (`Action impossible le volume ${id} est déjà lié à une autre instance`);
     }
-
-  }
-
-  checkNetworkExists(id: string): void {
-    const network = this.networksService.getById(id)
-    if (!network) {
-      throw new Error(`Réseau "${id}" introuvable`)
-    }
-  }
-
-  checkNetworkNameUnique(name: string): void {
-    const existing = this.networksService.getAll().find(n => n.name === name)
-    if (existing) {
-      throw new Error(`Un réseau avec le nom "${name}" existe déjà`)
-    }
-  }
-
-  checkNetworkEmpty(id: string): void {
-    const network = this.networksService.getById(id)
-    if (!network) {
-      throw new Error(`Réseau "${id}" introuvable`)
-    }
-    if (network.instance.length > 0) {
-      throw new Error(`Impossible de supprimer le réseau "${network.name}" — ${network.instance.length} container(s) encore connecté(s)`)
-    }
+    
   }
 }

@@ -1,9 +1,8 @@
 import { injectable } from 'tsyringe'
-import Dockerode from 'dockerode'
-import { CreateInstanceInput } from '../schemas/Instance.js'
+import Dockerode, { Volume } from 'dockerode'
+import { CreateInstanceInput, UpdateInstanceInput } from '../schemas/Instance.js'
 import { Stats } from '../models/stats.js';
 import { CreateInstanceResult } from '../models/instance.js';
-import { NetworkDriverEnum } from '../models/networks.js';
 
 
 // Variables d'env spécifiques à chaque type de BDD
@@ -222,29 +221,5 @@ export class DockerService {
       redis: 6379,
     }
     return ports[type]
-  }
-
-  // Crée un réseau Docker
-  async createNetwork(name: string, driver: NetworkDriverEnum = 'bridge'): Promise<{ dockerId: string }> {
-    const network = await this.docker.createNetwork({
-      Name: `${ENV_NAME_INSTANCE}${name}`,
-      Driver: driver,
-    })
-    return { dockerId: network.id }
-  }
-
-  // Supprime un réseau Docker
-  async removeNetwork(dockerId: string): Promise<void> {
-    await this.docker.getNetwork(dockerId).remove()
-  }
-
-  // Connecte un container à un réseau
-  async connectContainer(dockerNetworkId: string, containerId: string): Promise<void> {
-    await this.docker.getNetwork(dockerNetworkId).connect({ Container: containerId })
-  }
-
-  // Déconnecte un container d'un réseau
-  async disconnectContainer(dockerNetworkId: string, containerId: string): Promise<void> {
-    await this.docker.getNetwork(dockerNetworkId).disconnect({ Container: containerId })
   }
 }

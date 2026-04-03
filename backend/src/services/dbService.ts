@@ -4,9 +4,8 @@ import { Instance } from '../models/instance.js'
 import { LowSync } from 'lowdb'
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs'
 import { Volume } from '../models/volumes.js'
-import { Network } from '../models/networks.js'
 
-export type DbData = { instances: Instance[], volumes: Volume[], networks: Network[] }
+export type DbData = { instances: Instance[], volumes: Volume[] }
 const path = 'data/db.json'
 
 @injectable()
@@ -24,12 +23,12 @@ export class DbService {
   }
 
   if (!existsSync(path)) {
-    writeFileSync(path, '{ "instances": [], "volumes": [], "networks": [] }', { encoding: 'utf8' })
+    writeFileSync(path, '{ "instances": [], "volumes": [] }', { encoding: 'utf8' })
   }
 
 
     const adapter = new JSONFileSync<DbData>(path)
-    this.db = new LowSync(adapter, { instances: [], volumes: [], networks: [] })
+    this.db = new LowSync(adapter, { instances: [], volumes: [] })
     this.db.read()
   }
 

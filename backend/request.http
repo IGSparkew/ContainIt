@@ -1,16 +1,12 @@
 @baseUrl = http://localhost:3000/api
 
-# ============================================================
-# INSTANCES
-# ============================================================
-
-### List all instances
+### Lister toutes les instances
 GET {{baseUrl}}/instances
 Content-Type: application/json
 
 ###
 
-### Create a PostgreSQL instance
+### Créer une instance PostgreSQL
 # @name createPostgres
 POST {{baseUrl}}/instances
 Content-Type: application/json
@@ -25,7 +21,7 @@ Content-Type: application/json
 
 ###
 
-### Create a MySQL instance
+### Créer une instance MySQL
 # @name createMysql
 POST {{baseUrl}}/instances
 Content-Type: application/json
@@ -40,7 +36,7 @@ Content-Type: application/json
 
 ###
 
-### Create a MongoDB instance
+### Créer une instance MongoDB
 # @name createMongo
 POST {{baseUrl}}/instances
 Content-Type: application/json
@@ -55,7 +51,7 @@ Content-Type: application/json
 
 ###
 
-### Create a Redis instance
+### Créer une instance Redis
 # @name createRedis
 POST {{baseUrl}}/instances
 Content-Type: application/json
@@ -70,137 +66,50 @@ Content-Type: application/json
 
 ###
 
-### Get a single instance by ID
-GET {{baseUrl}}/instances/{{createPostgres.response.body.$.id}}
-Content-Type: application/json
-
-###
-
-### Start an instance
+### Démarrer l'instance PostgreSQL créée (id récupéré automatiquement)
 POST {{baseUrl}}/instances/{{createPostgres.response.body.$.id}}/start
 Content-Type: application/json
 
 ###
 
-### Stop an instance
+### Arrêter l'instance PostgreSQL créée
 POST {{baseUrl}}/instances/{{createPostgres.response.body.$.id}}/stop
 Content-Type: application/json
 
 ###
 
-### Get instance stats
-GET {{baseUrl}}/instances/{{createMysql.response.body.$.id}}/stats
-Content-Type: application/json
-
-###
-
-### Delete the PostgreSQL instance
+### Supprimer l'instance PostgreSQL créée
 DELETE {{baseUrl}}/instances/{{createPostgres.response.body.$.id}}
 Content-Type: application/json
 
-###
-
-### Delete the MySQL instance
+### Supprimer l'instance Mysql créée
 DELETE {{baseUrl}}/instances/{{createMysql.response.body.$.id}}
 Content-Type: application/json
 
-###
-
-### Delete the MongoDB instance
-DELETE {{baseUrl}}/instances/{{createMongo.response.body.$.id}}
-Content-Type: application/json
-
-###
-
-### Delete the Redis instance
+### Supprimer l'instance Redis créée
 DELETE {{baseUrl}}/instances/{{createRedis.response.body.$.id}}
 Content-Type: application/json
 
-###
-
-# ============================================================
-# VOLUMES (orphan volumes)
-# ============================================================
-
-### List all orphan volumes
-GET {{baseUrl}}/volumes
+### Supprimer l'instance Mongo créée
+DELETE {{baseUrl}}/instances/{{createMongo.response.body.$.id}}
 Content-Type: application/json
 
-###
-
-### Attach an orphan volume to an instance
-POST {{baseUrl}}/volumes/my-volume-id/attach
+### Stop mysql container
+GET {{baseUrl}}/instances/{{createMysql.response.body.$.id}}/stop
+Content-Type: application/json
+            
+### Start mysql container
+GET {{baseUrl}}/instances/{{createMysql.response.body.$.id}}/start
 Content-Type: application/json
 
-{
-  "instanceId": "{{createPostgres.response.body.$.id}}"
-}
-
-###
-
-### Delete an orphan volume
-DELETE {{baseUrl}}/volumes/my-volume-id
+### Stats mysql container
+GET {{baseUrl}}/instances/{{createMysql.response.body.$.id}}/stats
 Content-Type: application/json
 
-###
-
-# ============================================================
-# NETWORKS
-# ============================================================
-
-### List all networks
-GET {{baseUrl}}/networks
+### Get instances
+GET {{baseUrl}}/instances
 Content-Type: application/json
 
-###
-
-### Get a network by ID
-GET {{baseUrl}}/networks/my-network-id
+### Get instance MYSQL
+GET {{baseUrl}}/instances/{{createMysql.response.body.$.id}}
 Content-Type: application/json
-
-###
-
-### Create a bridge network
-# @name createNetwork
-POST {{baseUrl}}/networks
-Content-Type: application/json
-
-{
-  "name": "my-network",
-  "driver": "bridge"
-}
-
-###
-
-### Create an overlay network
-POST {{baseUrl}}/networks
-Content-Type: application/json
-
-{
-  "name": "my-overlay-network",
-  "driver": "overlay"
-}
-
-###
-
-### Attach a container to a network
-POST {{baseUrl}}/networks/{{createNetwork.response.body.$.id}}/attach
-Content-Type: application/json
-
-{
-  "containerId": "{{createPostgres.response.body.$.id}}"
-}
-
-###
-
-### Detach a container from a network
-DELETE {{baseUrl}}/networks/{{createNetwork.response.body.$.id}}/detach/{{createPostgres.response.body.$.id}}
-Content-Type: application/json
-
-###
-
-### Delete a network
-DELETE {{baseUrl}}/networks/{{createNetwork.response.body.$.id}}
-Content-Type: application/json
-
-###
