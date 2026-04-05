@@ -1,13 +1,15 @@
 <script lang="ts">
-    import { Network, Plus } from "lucide-svelte";
+    import { Network, Plus, Route } from "lucide-svelte";
+    import { openCreationFormModal, openCreationNetworkFormModal } from "./stores/storeModal";
+    import Instances from "./pages/Instances.svelte";
+    import Networking from "./pages/Networking.svelte";
+    import Router from "svelte-spa-router";
     import InstanceModal from "./components/instanceModal.svelte";
-    import { openCreationFormModal, openCreationNetworkFormModal, openDeleteConfirmModal } from "./stores/storeModal";
-    import InstanceTable from "./components/instanceTable.svelte";
-    import ConfirmDeleteModal from "./components/ConfirmDeleteModal.svelte";
     import NetworkModal from "./components/network/networkModal.svelte";
 
+    const routes = { '/': Instances, '/networking': Networking }
+    
     let instanceModal : InstanceModal;
-    let deleteModal : ConfirmDeleteModal;
     let networkModal : NetworkModal;
 </script>
 
@@ -18,7 +20,9 @@
     </button>
   </div>
   <div class="flex-1">
-    <a class="btn btn-ghost text-xl" href="/">ContainIt</a>
+    <a class="btn btn-ghost text-xl" href="#/">ContainIt</a>
+    <a class="btn btn-ghost text-xl" href="#/">Instances</a>
+    <a class="btn btn-ghost text-xl" href="#/networking">Networking</a>
   </div>
   <div class="flex-none">
     <button class="btn btn-square btn-ghost" onclick={() => openCreationNetworkFormModal.set(true)}>
@@ -29,15 +33,11 @@
     </button>
   </div>
 </div>
-<div class="mt-2.5 ml-1.5">
-  <InstanceTable />
-</div>
+
+<Router routes={routes} />
+
 {#if $openCreationFormModal}
   <InstanceModal bind:this={instanceModal} />
-{/if}
-
-{#if $openDeleteConfirmModal}
-  <ConfirmDeleteModal bind:this={deleteModal} />
 {/if}
 
 {#if $openCreationNetworkFormModal}
