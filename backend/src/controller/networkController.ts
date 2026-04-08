@@ -3,6 +3,7 @@ import { Context } from "hono";
 import { NetworksService } from "../services/networksService.js";
 import { DockerService } from "../services/dockerService.js";
 import { ValidationService } from "../services/validationService.js";
+import { InstanceService } from "../services/instanceService.js";
 import { AttachContainerInput, CreateNetworkInput } from "../schemas/network.js";
 import { Network } from "../models/networks.js";
 
@@ -13,7 +14,8 @@ export class NetworkController {
     constructor(
         @inject(NetworksService) private networksService: NetworksService,
         @inject(DockerService) private dockerService: DockerService,
-        @inject(ValidationService) private validationService: ValidationService
+        @inject(ValidationService) private validationService: ValidationService,
+        @inject(InstanceService) private instanceService: InstanceService
     ) {}
 
     getAllNetworks(c: Context) {
@@ -76,31 +78,34 @@ export class NetworkController {
         }
 
         this.validationService.checkNetworkExists(id);
-        this.validationService.checkInstanceExists(body.containerId);
+        this.validationService.checkInstanceExists(body.instanceId);
 
         const network = this.networksService.getById(id)!;
-        await this.dockerService.connectContainer(network.dockerId, body.containerId);
+        const instance = this.instanceService.getById(body.instanceId)!;
+        await this.dockerService.connectContainer(network.dockerId, instance.containerId);
 
-        return c.json(this.networksService.attachContainer(id, body.containerId), 200);
+        return c.json(this.networksService.attachContainer(id, body.instanceId), 200);
     }
 
     async detachContainer(c: Context) {
         const id = c.req.param('id');
-        const containerId = c.req.param('containerId');
-        
+        const instanceId = c.req.param('instanceId');
+
         if (!id) {
             throw new Error(`Réseau introuvable`);
         }
 
-        if (!containerId) {
+        if (!instanceId) {
             throw new Error(`Instance introuvable`);
         }
 
         this.validationService.checkNetworkExists(id);
+        this.validationService.checkInstanceExists(instanceId);
 
         const network = this.networksService.getById(id)!;
-        await this.dockerService.disconnectContainer(network.dockerId, containerId);
+        const instance = this.instanceService.getById(instanceId)!;
+        await this.dockerService.disconnectContainer(network.dockerId, instance.containerId);
 
-        return c.json(this.networksService.detachContainer(id, containerId), 200);
+        return c.json(this.networksService.detachContainer(id, instanceId), 200);
     }
 }

@@ -43,11 +43,11 @@ export class ServiceNetworkApi {
         return response.json();
     }
 
-    async attachContainer(networkId: string, containerId: string) {
+    async attachContainer(networkId: string, instanceId: string) {
         const response = await fetch(`${this.pathServer}/${networkId}/attach`, {
             method: 'POST',
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({containerId: containerId})
+            body: JSON.stringify({instanceId: instanceId})
         });
 
         if (!response.ok) {

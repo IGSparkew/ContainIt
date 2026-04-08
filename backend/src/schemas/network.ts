@@ -6,7 +6,7 @@ export const createNetworkSchema = z.object({
 })
 
 export const attachContainerSchema = z.object({
-    containerId: z.string().nonempty()
+    instanceId: z.string().nonempty()
 })
 
 export type CreateNetworkInput = z.infer<typeof createNetworkSchema>
