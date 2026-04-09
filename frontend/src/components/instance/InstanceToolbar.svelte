@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { networkStore } from "../stores/networkStore";
+    import { networkStore } from "../../stores/networkStore";
 
     const networkForm = $state<{id: string | undefined}>(getDefaultNetworkForm());
 
@@ -46,13 +46,6 @@
         <button class="btn btn-primary" disabled="{cantGetStats}" onclick={onStats}>Stats</button>
 
         {#if !cantGetStats}
-            {#each instanceNetworks as network (network.id)}
-                <div class="flex items-center gap-1">
-                    <span class="badge badge-outline">{network.name}</span>
-                    <button class="btn btn-sm btn-warning" onclick={() => disconnectNetwork(network.id)}>Detach</button>
-                </div>
-            {/each}
-
             {#if availableNetworks.length > 0 && instanceNetworks.length == 0}
                 <form class="flex flex-row gap-1" onsubmit={(e) => { e.preventDefault(); connectNetwork(); }}>
                     <select class="select select-sm" bind:value={networkForm.id}>

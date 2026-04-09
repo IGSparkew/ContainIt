@@ -1,10 +1,10 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { instanceStore } from "../stores/instanceStore";
+    import { instanceStore } from "../../stores/instanceStore";
     import InstanceToolbar from "./InstanceToolbar.svelte";
     import InstanceRow from "./instanceRow.svelte";
-    import StatsCard from "./StatsCard.svelte";
-    import { openDeleteConfirmModal } from "../stores/storeModal";
+    import StatsCard from "../shared/StatsCard.svelte";
+    import { openDeleteConfirmModal } from "../../stores/storeModal";
 
     const { isLoading, error, instancesIdToDelete, stats } = instanceStore
 

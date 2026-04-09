@@ -1,8 +1,8 @@
 <script lang="ts">
-    import type { Instance } from "../types/instance";
+    import type { Instance } from "../../types/instance";
     import InstanceRunningButton from "./instanceRunningButton.svelte";
     import InstanceStatus from "./instanceStatus.svelte";
-    import { networkStore } from "../stores/networkStore";
+    import { networkStore } from "../../stores/networkStore";
 
     type Props =  {
         instance: Instance;

@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { instanceStore } from "../stores/instanceStore";
-    import { openDeleteConfirmModal } from "../stores/storeModal";
+    import { instanceStore } from "../../../stores/instanceStore";
+    import { openDeleteConfirmModal } from "../../../stores/storeModal";
 
     let keepvolumes = $state<boolean>(true);
-    
-    const {instancesIdToDelete, error} = instanceStore;    
+
+    const {instancesIdToDelete, error} = instanceStore;
 
     let modal: HTMLDialogElement;
 

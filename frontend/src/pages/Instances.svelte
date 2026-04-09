@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import InstanceDeleteModal from "../components/instanceDeleteModal.svelte";
-    import InstanceTable from "../components/instanceTable.svelte";
+    import InstanceDeleteModal from "../components/instance/modal/instanceDeleteModal.svelte";
+    import InstanceTable from "../components/instance/instanceTable.svelte";
     import { openDeleteConfirmModal } from "../stores/storeModal";
     import { networkStore } from "../stores/networkStore";
 

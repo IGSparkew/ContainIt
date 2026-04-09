@@ -4,7 +4,7 @@
     import Instances from "./pages/Instances.svelte";
     import Networking from "./pages/Networking.svelte";
     import Router from "svelte-spa-router";
-    import InstanceModal from "./components/instanceModal.svelte";
+    import InstanceModal from "./components/instance/modal/instanceModal.svelte";
     import NetworkModal from "./components/network/networkModal.svelte";
 
     const routes = { '/': Instances, '/networking': Networking }

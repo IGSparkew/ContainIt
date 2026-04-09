@@ -97,7 +97,7 @@ export class DockerService {
 
   // Crée un volume 
   private async createVolume(name :string) {
-    const volumeName = `${ENV_NAME_INSTANCE}${name}`; 
+    const volumeName = `${ENV_NAME_INSTANCE}${name.trim()}`; 
     await this.docker.createVolume({Name: volumeName});
     return volumeName;
   }
@@ -126,7 +126,7 @@ export class DockerService {
     // Crée le conteneur
     const container = await this.docker.createContainer({
       Image: fullImage,
-      name: `${ENV_NAME_INSTANCE}${config.name}`,
+      name: `${ENV_NAME_INSTANCE}${config.name.trim()}`,
       Env: ENV_VARS[config.type](config.password),
       HostConfig: {
         Binds: [

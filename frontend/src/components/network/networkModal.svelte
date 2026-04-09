@@ -1,6 +1,5 @@
 <script lang="ts">
-    import { Network } from "lucide-svelte";
-import { networkStore } from "../../stores/networkStore";
+    import { networkStore } from "../../stores/networkStore";
     import { openCreationNetworkFormModal } from "../../stores/storeModal";
     import type { NetworkForm } from "../../types/network";
 
