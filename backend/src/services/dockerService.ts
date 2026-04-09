@@ -1,8 +1,9 @@
 import { injectable } from 'tsyringe'
-import Dockerode, { Volume } from 'dockerode'
-import { CreateInstanceInput, UpdateInstanceInput } from '../schemas/Instance.js'
+import Dockerode from 'dockerode'
+import { CreateInstanceInput } from '../schemas/Instance.js'
 import { Stats } from '../models/stats.js';
 import { CreateInstanceResult } from '../models/instance.js';
+import { NetworkDriverEnum } from '../models/networks.js';
 
 
 // Variables d'env spécifiques à chaque type de BDD
@@ -96,7 +97,7 @@ export class DockerService {
 
   // Crée un volume 
   private async createVolume(name :string) {
-    const volumeName = `${ENV_NAME_INSTANCE}${name}`; 
+    const volumeName = `${ENV_NAME_INSTANCE}${name.trim()}`; 
     await this.docker.createVolume({Name: volumeName});
     return volumeName;
   }
@@ -125,7 +126,7 @@ export class DockerService {
     // Crée le conteneur
     const container = await this.docker.createContainer({
       Image: fullImage,
-      name: `${ENV_NAME_INSTANCE}${config.name}`,
+      name: `${ENV_NAME_INSTANCE}${config.name.trim()}`,
       Env: ENV_VARS[config.type](config.password),
       HostConfig: {
         Binds: [
@@ -221,5 +222,29 @@ export class DockerService {
       redis: 6379,
     }
     return ports[type]
+  }
+
+  // Crée un réseau Docker
+  async createNetwork(name: string, driver: NetworkDriverEnum = 'bridge'): Promise<{ dockerId: string }> {
+    const network = await this.docker.createNetwork({
+      Name: `${ENV_NAME_INSTANCE}${name}`,
+      Driver: driver,
+    })
+    return { dockerId: network.id }
+  }
+
+  // Supprime un réseau Docker
+  async removeNetwork(dockerId: string): Promise<void> {
+    await this.docker.getNetwork(dockerId).remove()
+  }
+
+  // Connecte un container à un réseau
+  async connectContainer(dockerNetworkId: string, containerId: string): Promise<void> {
+    await this.docker.getNetwork(dockerNetworkId).connect({ Container: containerId })
+  }
+
+  // Déconnecte un container d'un réseau
+  async disconnectContainer(dockerNetworkId: string, containerId: string): Promise<void> {
+    await this.docker.getNetwork(dockerNetworkId).disconnect({ Container: containerId })
   }
 }

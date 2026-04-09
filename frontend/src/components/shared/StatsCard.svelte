@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Cpu, MemoryStick } from "lucide-svelte";
-    import type { IconTypeStat } from "../types/iconType";
+    import type { IconTypeStat } from "../../types/iconType";
 
     type Props = {
         name: string,

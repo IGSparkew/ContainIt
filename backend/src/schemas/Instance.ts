@@ -1,7 +1,7 @@
 import z from "zod"
 
 export const createInstanceSchema = z.object({
-  name: z.string().min(1).max(32),
+  name: z.string().trim().min(1).max(32),
   type: z.enum(['postgres', 'mysql', 'mongo', 'redis']),
   port: z.number().int().min(1024).max(65535),
   password: z.string().min(6),
@@ -10,7 +10,7 @@ export const createInstanceSchema = z.object({
 })
 
 export const updateInstanceSchema = z.object({
-  name: z.string().min(1).max(32).optional(),
+  name: z.string().trim().min(1).max(32).optional(),
   port: z.number().int().min(1024).max(65535).optional(),
   password: z.string().min(6).optional(),
   version: z.string().optional()

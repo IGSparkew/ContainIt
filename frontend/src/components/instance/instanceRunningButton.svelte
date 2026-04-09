@@ -1,8 +1,7 @@
 <script lang="ts">
     import { Pause, Play } from "lucide-svelte";
-    import type { InstanceStatus } from "../types/instance";
-    import { instanceStore } from "../stores/instanceStore";
-
+    import type { InstanceStatus } from "../../types/instance";
+    import { instanceStore } from "../../stores/instanceStore";
 
     type Props = {
         id: string
@@ -17,6 +16,6 @@
     <button class="hover:cursor-pointer" type="button" onclick={() => instanceStore.startInstance(id)}><Play /></button>
 {:else if status == 'running'}
     <button class="hover:cursor-pointer" type="button" onclick={() => instanceStore.stopInstance(id)}><Pause /></button>
-{:else}    
-  <div>error</div>  
+{:else}
+  <div>error</div>
 {/if}

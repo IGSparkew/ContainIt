@@ -1,6 +1,5 @@
 <script lang="ts">
-    import type { InstanceStatus } from "../types/instance";
-
+    import type { InstanceStatus } from "../../types/instance";
 
     type Props = {
         status: InstanceStatus
