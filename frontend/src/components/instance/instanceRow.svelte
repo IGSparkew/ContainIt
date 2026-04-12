@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { Instance } from "../../types/instance";
+    import { isAdminType } from "../../types/instance";
     import InstanceRunningButton from "./instanceRunningButton.svelte";
     import InstanceStatus from "./instanceStatus.svelte";
     import { networkStore } from "../../stores/networkStore";
@@ -45,5 +46,15 @@
         </td>
         <td class="hover:cursor-pointer">
             <InstanceRunningButton id={instance.id} status={instance.status} />
+        </td>
+        <td>
+            {#if isAdminType(instance.type)}
+                <a
+                    href="http://localhost:{instance.port}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn btn-xs btn-secondary"
+                >Open</a>
+            {/if}
         </td>
 </tr>

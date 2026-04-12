@@ -2,7 +2,7 @@ import { injectable } from 'tsyringe'
 import Dockerode from 'dockerode'
 import { CreateInstanceInput } from '../schemas/Instance.js'
 import { Stats } from '../models/stats.js';
-import { CreateInstanceResult } from '../models/instance.js';
+import { AdminToolType, CreateInstanceResult } from '../models/instance.js';
 import { NetworkDriverEnum } from '../models/networks.js';
 
 
@@ -26,7 +26,13 @@ const ENV_VARS: Record<string, (password: string) => string[]> = {
   ],
 }
 
-const ENV_NAME_INSTANCE = "containit-";
+const ENV_NAME_INSTANCE = "containit-"
+
+export const ADMIN_TOOL_CONFIG: Record<AdminToolType, { image: string; internalPort: number }> = {
+  'adminer':       { image: 'adminer',            internalPort: 8080 },
+  'mongo-express': { image: 'mongo-express',      internalPort: 8081 },
+  'redisinsight':  { image: 'redis/redisinsight', internalPort: 5540 },
+}
 
 // Nom de l'image Docker pour chaque type
 const IMAGE_NAMES: Record<string, string> = {
@@ -127,7 +133,7 @@ export class DockerService {
     const container = await this.docker.createContainer({
       Image: fullImage,
       name: `${ENV_NAME_INSTANCE}${config.name.trim()}`,
-      Env: ENV_VARS[config.type](config.password),
+      Env: ENV_VARS[config.type](config.password!),
       HostConfig: {
         Binds: [
           `${volumeName}:${this.getDataPath(config.type)}`
@@ -135,7 +141,7 @@ export class DockerService {
         PortBindings: {
           // Mappe le port interne du conteneur sur le port choisi par l'utilisateur
           [`${this.getInternalPort(config.type)}/tcp`]: [
-            { HostPort: config.port.toString() }
+            { HostPort: config.port!.toString() }
           ]
         },
         RestartPolicy: { Name: 'unless-stopped' }
@@ -246,5 +252,32 @@ export class DockerService {
   // Déconnecte un container d'un réseau
   async disconnectContainer(dockerNetworkId: string, containerId: string): Promise<void> {
     await this.docker.getNetwork(dockerNetworkId).disconnect({ Container: containerId })
+  }
+
+  // Crée un container d'outil d'administration et le connecte au réseau
+  async createAdminTool(toolType: AdminToolType, name: string, hostPort: number, networkDockerId: string, env: string[] = []): Promise<string> {
+    const { image, internalPort } = ADMIN_TOOL_CONFIG[toolType]
+
+    const exists = await this.imageExists(image)
+    if (!exists) {
+      console.log(`Pull de l'image ${image}...`)
+      await this.pullImage(image)
+      console.log(`Image ${image} prête`)
+    }
+
+    const container = await this.docker.createContainer({
+      Image: image,
+      name: `${ENV_NAME_INSTANCE}${name.trim()}`,
+      Env: env.length > 0 ? env : undefined,
+      HostConfig: {
+        PortBindings: {
+          [`${internalPort}/tcp`]: [{ HostPort: hostPort.toString() }]
+        },
+        RestartPolicy: { Name: 'unless-stopped' }
+      }
+    })
+
+    await this.connectContainer(networkDockerId, container.id)
+    return container.id
   }
 }

@@ -4,6 +4,7 @@
     import InstanceToolbar from "./InstanceToolbar.svelte";
     import InstanceRow from "./instanceRow.svelte";
     import StatsCard from "../shared/StatsCard.svelte";
+    import InstanceConnectionInfo from "./InstanceConnectionInfo.svelte";
     import { openDeleteConfirmModal } from "../../stores/storeModal";
 
     const { isLoading, error, instancesIdToDelete, stats } = instanceStore
@@ -73,6 +74,7 @@
                 <th>Status</th>
                 <th>Networks</th>
                 <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -82,6 +84,10 @@
         </tbody>
     </table>
 </div>
+
+{#if selectedRows.length === 1 && selectedInstance}
+    <InstanceConnectionInfo instance={selectedInstance} />
+{/if}
 
 {#if $stats !== null && selectedInstance}
     <section class="mt-4">

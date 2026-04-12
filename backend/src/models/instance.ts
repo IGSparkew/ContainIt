@@ -1,4 +1,14 @@
-export type InstanceType = 'postgres' | 'mysql' | 'mongo' | 'redis'
+export const DB_TYPES    = ['postgres', 'mysql', 'mongo', 'redis'] as const
+export const ADMIN_TYPES = ['adminer', 'mongo-express', 'redisinsight'] as const
+
+export type DbInstanceType = typeof DB_TYPES[number]
+export type AdminToolType  = typeof ADMIN_TYPES[number]
+export type InstanceType   = DbInstanceType | AdminToolType
+
+export function isAdminType(type: InstanceType): type is AdminToolType {
+  return (ADMIN_TYPES as readonly string[]).includes(type)
+}
+
 export type InstanceStatus = 'running' | 'stopped' | 'error'
 
 export interface Instance {
@@ -7,10 +17,11 @@ export interface Instance {
   type: InstanceType
   image: string
   port: number
-  password: string
+  password: string      // '' pour les outils admin
   containerId: string
   status: InstanceStatus
   createdAt: string
+  networkId?: string    // uniquement pour les outils admin
 }
 
 export type CreateInstanceResult = {
