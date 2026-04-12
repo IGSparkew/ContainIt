@@ -23,6 +23,10 @@
         selectedRows.length !== 1 || selectedInstance?.status === 'stopped'
     )
 
+    const cantGetNetworks = $derived(
+        selectedRows.length !== 1
+    )
+
     $effect(() => {
         if (selectedRows.length !== 1) {
             stats.set(null);
@@ -61,7 +65,7 @@
     </div>
 {/if}
 
-<InstanceToolbar onDelete={deleteInstances} {onStats} {cantGetStats} selectedRows={selectedRows} />
+<InstanceToolbar onDelete={deleteInstances} {cantGetNetworks} {onStats} {cantGetStats} selectedRows={selectedRows} />
 
 <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
     <table class="table">
