@@ -115,6 +115,20 @@ export class ValidationService {
 
   }
 
+  // Trouve le premier port libre à partir de startFrom
+  async findFreePort(startFrom = 10000): Promise<number> {
+    let port = startFrom
+    while (port <= 65535) {
+      try {
+        await this.checkPortAvailable(port)
+        return port
+      } catch {
+        port++
+      }
+    }
+    throw new Error('Aucun port libre disponible entre 10000 et 65535')
+  }
+
   checkNetworkExists(id: string): void {
     const network = this.networksService.getById(id)
     if (!network) {

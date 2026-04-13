@@ -12,9 +12,10 @@
         onDelete: () => void
         onStats: () => void
         cantGetStats: boolean
+        cantGetNetworks: boolean
     }
 
-    const { selectedRows, onDelete, onStats, cantGetStats }: Props = $props();
+    const { selectedRows, onDelete, onStats, cantGetStats, cantGetNetworks }: Props = $props();
 
     // Réseaux auxquels l'instance sélectionnée est connectée
     const instanceNetworks = $derived(
@@ -45,7 +46,7 @@
         <button class="btn btn-error" onclick={onDelete}>Delete</button>
         <button class="btn btn-primary" disabled="{cantGetStats}" onclick={onStats}>Stats</button>
 
-        {#if !cantGetStats}
+        {#if !cantGetNetworks}
             {#if availableNetworks.length > 0 && instanceNetworks.length == 0}
                 <form class="flex flex-row gap-1" onsubmit={(e) => { e.preventDefault(); connectNetwork(); }}>
                     <select class="select select-sm" bind:value={networkForm.id}>
