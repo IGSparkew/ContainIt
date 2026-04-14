@@ -17,11 +17,11 @@ export interface Instance {
   type: InstanceType
   image: string
   port: number
-  password: string      // '' pour les outils admin
+  password: string
   containerId: string
   status: InstanceStatus
   createdAt: string
-  networkId?: string    // uniquement pour les outils admin
+  networkId?: string
 }
 
 export type CreateInstanceResult = {
