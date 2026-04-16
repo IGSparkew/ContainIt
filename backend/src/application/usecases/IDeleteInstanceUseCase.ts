@@ -1,5 +1,5 @@
 
 
 export interface IDeleteInstanceUseCase {
-    execute(id: string, keepVolume: boolean) : void;
+    execute(id: string, keepVolume: boolean): Promise<void>;
 }

@@ -1,3 +1,4 @@
+import { isAdminType } from "../../../domain/models/instance.js";
 import { IDockerPort } from "../../repositories/IDockerPort.js";
 import { IInstanceRepository } from "../../repositories/IInstanceRepository.js";
 import { INetworkRepository } from "../../repositories/INetworkRepository.js";
@@ -6,33 +7,38 @@ import { IDeleteInstanceUseCase } from "../IDeleteInstanceUseCase.js";
 
 export class DeleteInstanceUseCase implements IDeleteInstanceUseCase {
 
-    constructor(private instanceRepository: IInstanceRepository, private volumeRepository: IVolumeRepository, private networkRepository: INetworkRepository, private dockerPort: IDockerPort) {}
+    constructor(
+        private instanceRepository: IInstanceRepository,
+        private volumeRepository: IVolumeRepository,
+        private networkRepository: INetworkRepository,
+        private dockerPort: IDockerPort,
+    ) {}
 
     async execute(id: string, keepVolume: boolean): Promise<void> {
         const instance = this.instanceRepository.getById(id);
         if (!instance) {
-            throw new Error("Error wrong id");
+            throw new Error(`Instance "${id}" introuvable`);
         }
 
-        // if (isAdminType(instance.type)) {
-        //     // --- Branche outil admin ---
-        //     if (instance.networkId) {
-        //         const network = this.networksService.getById(instance.networkId)
-        //         if (network) {
-        //             await this.dockerService.disconnectContainer(network.dockerId, instance.containerId)
-        //         }
-        //     }
-        //     await this.dockerService.deleteInstance(instance.containerId, true, undefined)
-        //     this.instanceService.remove(instance.id)
-        //     return c.json({"message": "remove instance with id: " + id}, 200);
-        // }
+        if (isAdminType(instance.type)) {
+            // --- Branche outil admin ---
+            if (instance.networkId) {
+                const network = this.networkRepository.getById(instance.networkId);
+                if (network) {
+                    await this.dockerPort.disconnectContainer(network.dockerId, instance.containerId);
+                }
+            }
+            await this.dockerPort.deleteInstance(instance.containerId, true, undefined);
+            this.instanceRepository.remove(instance.id);
+            return;
+        }
 
-        // --- Branche instance DB (flux existant inchangé) ---
+        // --- Branche instance DB ---
         const volume = this.volumeRepository.getByContainerId(instance.containerId);
         const volumeName = volume !== undefined ? volume.name : undefined;
 
         const statusContainer = await this.dockerPort.getStatus(instance.containerId);
-        if (statusContainer == 'running') {
+        if (statusContainer === 'running') {
             await this.dockerPort.stopInstance(instance.containerId);
         }
 
@@ -47,5 +53,4 @@ export class DeleteInstanceUseCase implements IDeleteInstanceUseCase {
             }
         }
     }
-    
 }
