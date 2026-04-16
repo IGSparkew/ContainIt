@@ -10,7 +10,7 @@ export interface IDockerPort {
     deleteInstance(containerId: string, keepVolume: boolean, volumeName?: string | undefined): Promise<void>,
     getStatus(containerId: string): Promise<'running'|'stopped'|'error'>,
     getStats(containerId: string): Promise<Stats>,
-    createNetwork(name: string, driver?: NetworkDriverEnum): Promise<void>,
+    createNetwork(name: string, driver?: NetworkDriverEnum): Promise<{ dockerId: string }>,
     removeNetwork(dockerId: string): Promise<void>,
     connectContainer(dockerNetworkId: string, containerId: string): Promise<void>,
     disconnectContainer(dockerNetworkId: string, containerId: string): Promise<void>,
