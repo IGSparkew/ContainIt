@@ -1,6 +1,6 @@
-import { Instance } from "../../../domain/models/instance.js";
-import { IDockerPort } from "../../repositories/IDockerPort.js";
-import { IInstanceRepository } from "../../repositories/IInstanceRepository.js";
+import { Instance } from "../../../../domain/models/instance.js";
+import { IDockerPort } from "../../../repositories/IDockerPort.js";
+import { IInstanceRepository } from "../../../repositories/IInstanceRepository.js";
 import { IStopInstanceUseCase } from "../IStopInstanceUseCase.js";
 
 export class StopInstanceUseCase implements IStopInstanceUseCase {

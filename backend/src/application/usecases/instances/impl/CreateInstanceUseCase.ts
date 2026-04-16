@@ -1,19 +1,11 @@
-import { CreateInstanceDTO } from "../../../domain/dto/instance.dto.js";
-import { AdminToolType, Instance, isAdminType } from "../../../domain/models/instance.js";
-import { Volume } from "../../../domain/models/volumes.js";
-import { IDockerPort } from "../../repositories/IDockerPort.js";
-import { IInstanceRepository } from "../../repositories/IInstanceRepository.js";
-import { INetworkRepository } from "../../repositories/INetworkRepository.js";
-import { IVolumeRepository } from "../../repositories/IVolumeRepository.js";
+import { CreateInstanceDTO } from "../../../../domain/dto/instance.dto.js";
+import { ADMIN_TOOL_IMAGES, AdminToolType, Instance, isAdminType, SUPPORTED_DB_IMAGES } from "../../../../domain/models/instance.js";
+import { Volume } from "../../../../domain/models/volumes.js";
+import { IDockerPort } from "../../../repositories/IDockerPort.js";
+import { IInstanceRepository } from "../../../repositories/IInstanceRepository.js";
+import { INetworkRepository } from "../../../repositories/INetworkRepository.js";
+import { IVolumeRepository } from "../../../repositories/IVolumeRepository.js";
 import { ICreateInstanceUseCase } from "../ICreateInstanceUseCase.js";
-
-const SUPPORTED_DB_IMAGES = ['postgres', 'mysql', 'mongo', 'redis'] as const;
-
-const ADMIN_TOOL_IMAGES: Record<AdminToolType, string> = {
-    'adminer':       'adminer',
-    'mongo-express': 'mongo-express',
-    'redisinsight':  'redis/redisinsight',
-};
 
 export class CreateInstanceUseCase implements ICreateInstanceUseCase {
 

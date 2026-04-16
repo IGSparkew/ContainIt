@@ -28,3 +28,11 @@ export type CreateInstanceResult = {
   containerId: string,
   volumeName: string
 }
+
+export const SUPPORTED_DB_IMAGES = ['postgres', 'mysql', 'mongo', 'redis'] as const;
+
+export const ADMIN_TOOL_IMAGES: Record<AdminToolType, string> = {
+    'adminer':       'adminer',
+    'mongo-express': 'mongo-express',
+    'redisinsight':  'redis/redisinsight',
+};

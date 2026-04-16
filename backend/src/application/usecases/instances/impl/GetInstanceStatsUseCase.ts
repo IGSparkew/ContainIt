@@ -1,6 +1,6 @@
-import { Stats } from "../../../domain/models/stats.js";
-import { IDockerPort } from "../../repositories/IDockerPort.js";
-import { IInstanceRepository } from "../../repositories/IInstanceRepository.js";
+import { Stats } from "../../../../domain/models/stats.js";
+import { IDockerPort } from "../../../repositories/IDockerPort.js";
+import { IInstanceRepository } from "../../../repositories/IInstanceRepository.js";
 import { IGetInstanceStatsUseCase } from "../IGetInstanceStatsUseCase.js";
 
 export class GetInstanceStatsUseCase implements IGetInstanceStatsUseCase {

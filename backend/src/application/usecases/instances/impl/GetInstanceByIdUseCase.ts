@@ -1,5 +1,5 @@
-import { Instance } from "../../../domain/models/instance.js";
-import { IInstanceRepository } from "../../repositories/IInstanceRepository.js";
+import { Instance } from "../../../../domain/models/instance.js";
+import { IInstanceRepository } from "../../../repositories/IInstanceRepository.js";
 import { IGetInstanceByIdUseCase } from "../IGetInstanceByIdUseCase.js";
 
 export class GetInstanceByIdUseCase implements IGetInstanceByIdUseCase {

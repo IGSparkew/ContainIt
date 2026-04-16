@@ -1,8 +1,8 @@
-import { isAdminType } from "../../../domain/models/instance.js";
-import { IDockerPort } from "../../repositories/IDockerPort.js";
-import { IInstanceRepository } from "../../repositories/IInstanceRepository.js";
-import { INetworkRepository } from "../../repositories/INetworkRepository.js";
-import { IVolumeRepository } from "../../repositories/IVolumeRepository.js";
+import { isAdminType } from "../../../../domain/models/instance.js";
+import { IDockerPort } from "../../../repositories/IDockerPort.js";
+import { IInstanceRepository } from "../../../repositories/IInstanceRepository.js";
+import { INetworkRepository } from "../../../repositories/INetworkRepository.js";
+import { IVolumeRepository } from "../../../repositories/IVolumeRepository.js";
 import { IDeleteInstanceUseCase } from "../IDeleteInstanceUseCase.js";
 
 export class DeleteInstanceUseCase implements IDeleteInstanceUseCase {
