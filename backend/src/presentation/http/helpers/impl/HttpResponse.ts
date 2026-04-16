@@ -1,6 +1,5 @@
 import { IHttpResponse } from "../IHttpResponse.js";
 
-
 export class HttpResponse implements IHttpResponse {
     statusCode: number;
     body: Record<string, string>;

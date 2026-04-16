@@ -7,8 +7,9 @@ import { JSONFileSync } from "lowdb/node";
 const path = 'data/db.json';
 
 export class LowDbClient implements ILowDbClient {
+    private db: LowSync<DbData>
 
-    constructor(private db: LowSync<DbData>) {
+    constructor() {
         if (existsSync(path)) {
             try {
                 JSON.parse(readFileSync(path, 'utf-8'))
