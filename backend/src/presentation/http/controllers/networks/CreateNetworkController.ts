@@ -26,7 +26,7 @@ export class CreateNetworkController implements IController {
             };
             const network = await this.createNetworkUseCase.execute(dto);
             return new HttpResponse(200, network);
-        } catch {
+        } catch(err) {
             return this.httpError.bad_request();
         }
     }

@@ -21,7 +21,7 @@ export class GetNetworkByIdController implements IController {
             const path = httpRequest.path as HttpRequestId;
             const network = this.getNetworkByIdUseCase.execute(path.id);
             return new HttpResponse(200, network);
-        } catch {
+        } catch(err) {
             return this.httpError.not_found();
         }
     }

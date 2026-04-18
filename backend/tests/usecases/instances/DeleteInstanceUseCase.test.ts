@@ -35,14 +35,15 @@ describe('DeleteInstanceUseCase', () => {
     });
 
     describe('admin tool branch', () => {
-        it('disconnects from network then deletes container', async () => {
+        it('disconnects and detaches from network then deletes container', async () => {
             const admin = makeInstance({ type: 'adminer', networkId: 'net-1', containerId: 'c-admin' });
             (instanceRepo.getById as any).mockReturnValue(admin);
-            (networkRepo.getById as any).mockReturnValue(makeNetwork({ dockerId: 'docker-net-1' }));
+            (networkRepo.getById as any).mockReturnValue(makeNetwork({ id: 'net-1', dockerId: 'docker-net-1' }));
 
             await usecase.execute(admin.id, false);
 
             expect(dockerPort.disconnectContainer).toHaveBeenCalledWith('docker-net-1', 'c-admin');
+            expect(networkRepo.detachContainer).toHaveBeenCalledWith('net-1', 'c-admin');
             expect(dockerPort.deleteInstance).toHaveBeenCalledWith('c-admin', true, undefined);
             expect(instanceRepo.remove).toHaveBeenCalledWith(admin.id);
         });
@@ -54,7 +55,19 @@ describe('DeleteInstanceUseCase', () => {
             await usecase.execute(admin.id, false);
 
             expect(dockerPort.disconnectContainer).not.toHaveBeenCalled();
+            expect(networkRepo.detachContainer).not.toHaveBeenCalled();
             expect(dockerPort.deleteInstance).toHaveBeenCalled();
+        });
+
+        it('does not call disconnect when network not found in repo', async () => {
+            const admin = makeInstance({ type: 'adminer', networkId: 'net-missing' });
+            (instanceRepo.getById as any).mockReturnValue(admin);
+            (networkRepo.getById as any).mockReturnValue(undefined);
+
+            await usecase.execute(admin.id, false);
+
+            expect(dockerPort.disconnectContainer).not.toHaveBeenCalled();
+            expect(networkRepo.detachContainer).not.toHaveBeenCalled();
         });
     });
 
@@ -101,6 +114,31 @@ describe('DeleteInstanceUseCase', () => {
             await usecase.execute('inst-1', false);
 
             expect(dockerPort.deleteInstance).toHaveBeenCalledWith('container-1', false, undefined);
+        });
+
+        it('detaches container from all associated networks', async () => {
+            const inst = makeInstance({ containerId: 'c-db' });
+            (instanceRepo.getById as any).mockReturnValue(inst);
+            (dockerPort.getStatus as any).mockResolvedValue('stopped');
+            (networkRepo.getByContainerId as any).mockReturnValue([
+                makeNetwork({ id: 'net-1' }),
+                makeNetwork({ id: 'net-2' }),
+            ]);
+
+            await usecase.execute(inst.id, false);
+
+            expect(networkRepo.detachContainer).toHaveBeenCalledWith('net-1', 'c-db');
+            expect(networkRepo.detachContainer).toHaveBeenCalledWith('net-2', 'c-db');
+        });
+
+        it('does not call detachContainer when instance belongs to no network', async () => {
+            (instanceRepo.getById as any).mockReturnValue(makeInstance());
+            (dockerPort.getStatus as any).mockResolvedValue('stopped');
+            (networkRepo.getByContainerId as any).mockReturnValue([]);
+
+            await usecase.execute('inst-1', false);
+
+            expect(networkRepo.detachContainer).not.toHaveBeenCalled();
         });
     });
 });

@@ -44,7 +44,7 @@ export const DB_INTERNAL_PORTS: Record<string, number> = {
 
 /** Volume mount path inside the container for each database type */
 export const DB_DATA_PATHS: Record<string, string> = {
-    postgres: '/var/lib/postgresql/data',
+    postgres: '/var/lib/postgresql',
     mysql:    '/var/lib/mysql',
     mongo:    '/data/db',
     redis:    '/data',

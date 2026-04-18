@@ -36,10 +36,5 @@
 
 <Router routes={routes} />
 
-{#if $openCreationFormModal}
-  <InstanceModal bind:this={instanceModal} />
-{/if}
-
-{#if $openCreationNetworkFormModal}
-  <NetworkModal bind:this={networkModal}/>
-{/if}
+<InstanceModal bind:this={instanceModal} />
+<NetworkModal bind:this={networkModal} />
