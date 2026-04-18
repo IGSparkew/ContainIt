@@ -81,7 +81,7 @@
 
 {#if selectedNetwork && selectedNetworkInstances.length > 0}
     <section class="mt-4">
-        <h2 class="text-sm font-semibold mb-2 opacity-60">Instances connectées à <span class="font-bold">{selectedNetwork.name}</span></h2>
+        <h2 class="text-sm font-semibold mb-2 opacity-60">Instances connected to <span class="font-bold">{selectedNetwork.name}</span></h2>
         <div class="flex flex-wrap gap-3">
             {#each selectedNetworkInstances as instance (instance.id)}
                 <div class="card bg-base-100 border border-base-content/10 w-48">
@@ -96,7 +96,7 @@
     </section>
 {:else if selectedNetwork && selectedNetworkInstances.length === 0}
     <section class="mt-4">
-        <p class="text-sm opacity-50">Aucune instance connectée à <span class="font-semibold">{selectedNetwork.name}</span>.</p>
+        <p class="text-sm opacity-50">No instance connected to <span class="font-semibold">{selectedNetwork.name}</span>.</p>
     </section>
 {/if}
 
