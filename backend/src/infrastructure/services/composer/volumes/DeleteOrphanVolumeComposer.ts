@@ -6,7 +6,6 @@ import { DeleteOrphanVolumeController } from "../../../../presentation/http/cont
 import { LowDbClient } from "../../../providers/LowDbClient.js";
 import { VolumeRepository } from "../../../repositories/VolumeRepository.js";
 
-
 export function deleteOrphanVolumeComposer() : IController {
     const client = new LowDbClient();
     const volumeRepository : IVolumeRepository = new VolumeRepository(client);

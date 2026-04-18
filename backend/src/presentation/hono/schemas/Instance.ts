@@ -33,6 +33,10 @@ export const updateInstanceSchema = z.object({
   version: z.string().optional()
 })
 
-// Le type est inféré automatiquement depuis le schéma
+export const deleteInstanceSchema = z.object({
+  keepVolume: z.boolean()
+})
+
 export type CreateInstanceInput = z.infer<typeof createInstanceSchema>;
 export type UpdateInstanceInput = z.infer<typeof updateInstanceSchema>;
+export type DeleteInstanceInput = z.infer<typeof deleteInstanceSchema>;
