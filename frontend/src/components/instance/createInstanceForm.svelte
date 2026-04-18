@@ -55,13 +55,6 @@
     return '';
   })());
 
-  const networkError = $derived((() => {
-    if (!isAdmin) return '';
-    if (!submitted && !form.networkId) return '';
-    if (!form.networkId) return 'Le réseau est requis';
-    return '';
-  })());
-
   const isFormValid = $derived(
     !nameError && !typeError && !!form.name && !!form.type &&
     (isAdmin

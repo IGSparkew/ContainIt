@@ -3,18 +3,14 @@
   import { openCreationFormModal } from "../../../stores/storeModal";
   import type { InstanceForm } from "../../../types/instance";
   import { volumeStore } from "../../../stores/volumeStore";
-  import { onMount } from "svelte";
   import CreateInstanceForm from "../createInstanceForm.svelte";
 
   let modal: HTMLDialogElement;
   let isClosing = false;
 
-  onMount(async () => {
-    await volumeStore.fetchOrphanVolumes();
-  });
-
   $effect(() => {
     if ($openCreationFormModal) {
+      volumeStore.fetchOrphanVolumes();
       modal.showModal();
     } else {
       modal.close();
