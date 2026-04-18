@@ -42,8 +42,10 @@ export class ServiceInstanceApi {
     }
 
     async deleteInstance(id: string, keepvolume: boolean) : Promise<void> {
-       const response = await fetch(`${this.pathServer}/instances/${id}?keepVolume=${keepvolume}`, {
-            method: 'DELETE'
+       const response = await fetch(`${this.pathServer}/instances/${id}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ keepVolume: keepvolume })
         });
         if (!response.ok) {
             throw new Error('Error when deleting instance ');
@@ -51,7 +53,9 @@ export class ServiceInstanceApi {
     }
 
     async startInstance(id: string) : Promise<Instance> {
-        const response = await fetch(`${this.pathServer}/instances/${id}/start`);
+        const response = await fetch(`${this.pathServer}/instances/${id}/start`, {
+            method: 'POST'
+        });
 
         if (!response.ok) {
             throw new Error('Error when starting instances');
@@ -61,7 +65,9 @@ export class ServiceInstanceApi {
     }
 
     async stopInstance(id: string) : Promise<Instance> {
-        const response = await fetch(`${this.pathServer}/instances/${id}/stop`);
+        const response = await fetch(`${this.pathServer}/instances/${id}/stop`, {
+            method: 'POST'
+        });
 
         if (!response.ok) {
             throw new Error('Error when starting instances');

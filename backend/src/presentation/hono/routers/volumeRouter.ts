@@ -13,15 +13,15 @@ export const VolumeRouter = new Hono();
 
 VolumeRouter.get('/', async (c) => {
     const adapter = await honoAdapters(c, getOrphanVolumeComposer());
-    return c.json(adapter.statusCode, adapter.body);
+    return c.json(adapter.body, adapter.statusCode);
 })
 
 VolumeRouter.delete('/:id', zValidator("param", httpRequestIdSchema), async (c) => {
     const adapter = await honoAdapters(c, deleteOrphanVolumeComposer());
-    return c.json(adapter.statusCode, adapter.body);
+    return c.json(adapter.body, adapter.statusCode);
 })
 
 VolumeRouter.post('/:id/attach', zValidator("param", httpRequestIdSchema), zValidator("json", attachContainerSchema), async (c) => {
     const adapter = await honoAdapters(c, attachOrphanVolumeComposer());
-    return c.json(adapter.statusCode, adapter.body);
+    return c.json(adapter.body, adapter.statusCode);
 })
