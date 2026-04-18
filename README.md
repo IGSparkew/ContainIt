@@ -118,6 +118,10 @@ Data is persisted in `data/db.json`, which is bind-mounted in Docker so it survi
 
 ---
 
+## Links
+
+- [Docker Hub](https://hub.docker.com/r/sparkew/containit)
+
 **Author:** [IGSparkew](https://github.com/IGSparkew)
 
 Copyright © 2026 IGSparkew
