@@ -4,7 +4,7 @@ import { NetworksService } from "../services/networksService.js";
 import { DockerService } from "../services/dockerService.js";
 import { ValidationService } from "../services/validationService.js";
 import { InstanceService } from "../services/instanceService.js";
-import { AttachContainerInput, CreateNetworkInput } from "../schemas/network.js";
+import { AttachContainerInput, CreateNetworkInput } from "../presentation/hono/schemas/network.js";
 import { Network } from "../models/networks.js";
 
 

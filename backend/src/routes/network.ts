@@ -2,7 +2,7 @@ import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono'
 import { container } from 'tsyringe';
 import { NetworkController } from '../controller/networkController.js';
-import { attachContainerSchema, createNetworkSchema } from '../schemas/network.js';
+import { attachContainerSchema, createNetworkSchema } from '../presentation/hono/schemas/network.js';
 
 export const networkRoute = new Hono();
 

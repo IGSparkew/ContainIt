@@ -17,7 +17,6 @@ export async function honoAdapters(c: Context, apiRoute: IController) : Promise<
         }
     }
 
-
     const httpRequest: IHttpRequest = new HttpRequest({
         header: Object.fromEntries(c.req.raw.headers.entries()),
         body,

@@ -2,7 +2,7 @@ import { inject, injectable } from "tsyringe";
 import { ValidationService } from "../services/validationService.js";
 import { DockerService, ADMIN_TOOL_CONFIG } from "../services/dockerService.js";
 import { Context } from "hono";
-import { CreateInstanceInput } from "../schemas/Instance.js";
+import { CreateInstanceInput } from "../presentation/hono/schemas/Instance.js";
 import { AdminToolType, Instance, isAdminType } from "../models/instance.js";
 import { InstanceService } from "../services/instanceService.js";
 import { Volume } from "../models/volumes.js";

@@ -1,10 +1,11 @@
+import { ContentfulStatusCode } from "hono/utils/http-status";
 import { IHttpResponse } from "../IHttpResponse.js";
 
 export class HttpResponse implements IHttpResponse {
-    statusCode: number;
+    statusCode: ContentfulStatusCode;
     body: Record<string, string>;
 
-    constructor(statusCode: number, body: any) {
+    constructor(statusCode: ContentfulStatusCode, body: any) {
         this.statusCode = statusCode;
         this.body = body;
     }

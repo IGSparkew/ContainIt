@@ -1,7 +1,7 @@
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono'
 import { container } from 'tsyringe';
-import { createInstanceSchema } from '../schemas/Instance.js';
+import { createInstanceSchema } from '../presentation/hono/schemas/Instance.js';
 import { InstanceController } from '../controller/instance.js';
 
 export const instancesRoute = new Hono();

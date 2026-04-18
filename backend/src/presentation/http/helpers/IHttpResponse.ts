@@ -1,7 +1,8 @@
+import { ContentfulStatusCode } from "hono/utils/http-status"
 
 export interface IHttpResponse {
 
-    statusCode: number
+    statusCode: ContentfulStatusCode
 
     body: Record<string, string>
 }

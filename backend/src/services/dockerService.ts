@@ -1,6 +1,6 @@
 import { injectable } from 'tsyringe'
 import Dockerode from 'dockerode'
-import { CreateInstanceInput } from '../schemas/Instance.js'
+import { CreateInstanceInput } from '../presentation/hono/schemas/Instance.js'
 import { Stats } from '../models/stats.js';
 import { AdminToolType, CreateInstanceResult } from '../models/instance.js';
 import { NetworkDriverEnum } from '../models/networks.js';

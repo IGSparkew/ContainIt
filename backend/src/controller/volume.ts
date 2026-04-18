@@ -2,7 +2,7 @@ import { inject, injectable } from "tsyringe";
 import { VolumesService } from "../services/volumesService.js";
 import { Context } from "hono";
 import { ValidationService } from "../services/validationService.js";
-import { LinkVolume } from "../schemas/volume.js";
+import { LinkVolume } from "../presentation/hono/schemas/volume.js";
 import { DockerService } from "../services/dockerService.js";
 
 
