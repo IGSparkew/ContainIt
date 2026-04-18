@@ -24,27 +24,34 @@
 
   const nameError = $derived((() => {
     if (!submitted && !form.name) return '';
-    if (!form.name || form.name.trim() === '') return 'Le nom est requis';
-    if (!NAME_REGEX.test(form.name)) return "Uniquement lettres, chiffres, tirets et underscores (pas d'espaces)";
-    if (form.name.length < 2 || form.name.length > 32) return 'Entre 2 et 32 caractères';
+    if (!form.name || form.name.trim() === '') return 'Name is required';
+    if (!NAME_REGEX.test(form.name)) return "Only letters, digits, hyphens and underscores (no spaces)";
+    if (form.name.length < 2 || form.name.length > 32) return 'Between 2 and 32 characters';
     return '';
   })());
 
-  const typeError = $derived(submitted && !form.type ? 'Le type est requis' : '');
+  const typeError = $derived(submitted && !form.type ? 'Type is required' : '');
 
   const portError = $derived((() => {
     if (isAdmin) return '';
     if (!submitted && !form.port) return '';
-    if (!form.port) return 'Le port est requis';
-    if (form.port < 1024 || form.port > 65535) return 'Le port doit être entre 1024 et 65535';
+    if (!form.port) return 'Port is required';
+    if (form.port < 1024 || form.port > 65535) return 'Port must be between 1024 and 65535';
     return '';
   })());
 
   const passwordError = $derived((() => {
     if (isAdmin) return '';
     if (!submitted && !form.password) return '';
-    if (!form.password || form.password.trim() === '') return 'Le mot de passe est requis';
-    if (form.password.length < 6) return '6 caractères minimum';
+    if (!form.password || form.password.trim() === '') return 'Password is required';
+    if (form.password.length < 6) return '6 characters minimum';
+    return '';
+  })());
+
+  const networkError = $derived((() => {
+    if (!isAdmin) return '';
+    if (!submitted && !form.networkId) return '';
+    if (!form.networkId) return 'Network is required';
     return '';
   })());
 
@@ -101,7 +108,7 @@
       class="input {nameError ? 'input-error' : ''}"
       type="text"
       bind:value={form.name}
-      placeholder="Nom de l'instance"
+      placeholder="Instance name"
     />
     {#if nameError}<span class="text-error text-sm mt-1">{nameError}</span>{/if}
   </div>
@@ -112,14 +119,14 @@
       bind:value={form.type}
       onchange={changeTypeInstance}
     >
-      <option value={undefined} disabled selected>Choisir le type d'instance</option>
-      <optgroup label="Bases de données">
+      <option value={undefined} disabled selected>Choose instance type</option>
+      <optgroup label="Databases">
         <option value="postgres">PostgreSQL</option>
         <option value="mysql">MySQL</option>
         <option value="mongo">MongoDB</option>
         <option value="redis">Redis</option>
       </optgroup>
-      <optgroup label="Outils d'administration">
+      <optgroup label="Admin tools">
         <option value="adminer">Adminer</option>
         <option value="mongo-express">Mongo Express</option>
         <option value="redisinsight">RedisInsight</option>
@@ -134,7 +141,7 @@
         class="select {networkError ? 'select-error' : ''}"
         bind:value={form.networkId}
       >
-        <option value={undefined} disabled selected>Choisir le réseau</option>
+        <option value={undefined} disabled selected>Choose a network</option>
         {#each $networkStore as network (network.id)}
           <option value={network.id}>{network.name}</option>
         {/each}
@@ -149,7 +156,7 @@
         min="1024"
         max="65535"
         bind:value={form.port}
-        placeholder="Port de l'instance"
+        placeholder="Instance port"
       />
       {#if portError}<span class="text-error text-sm mt-1">{portError}</span>{/if}
     </div>
@@ -159,7 +166,7 @@
         class="input {passwordError ? 'input-error' : ''}"
         type="password"
         bind:value={form.password}
-        placeholder="Mot de passe (6 caractères min.)"
+        placeholder="Password (6 chars min.)"
       />
       {#if passwordError}<span class="text-error text-sm mt-1">{passwordError}</span>{/if}
     </div>
@@ -167,7 +174,7 @@
     {#if orphanVolumes.length > 0}
       <div class="form-control">
         <select class="select" bind:value={form.volumeId}>
-          <option value={undefined} disabled selected>Choisir un volume (optionnel)</option>
+          <option value={undefined} disabled selected>Choose a volume (optional)</option>
           {#each orphanVolumes as orphanVolume (orphanVolume.id)}
             <option value={orphanVolume.id}>{orphanVolume.name}</option>
           {/each}
@@ -177,7 +184,7 @@
   {/if}
 
   <div class="flex gap-2 justify-end">
-    <button class="btn" type="button" onclick={oncancel}>Annuler</button>
-    <button class="btn btn-primary" type="submit">Créer l'instance</button>
+    <button class="btn" type="button" onclick={oncancel}>Cancel</button>
+    <button class="btn btn-primary" type="submit">Create instance</button>
   </div>
 </form>

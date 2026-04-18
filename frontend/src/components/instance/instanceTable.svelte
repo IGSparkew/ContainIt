@@ -95,7 +95,7 @@
 
 {#if $stats !== null && selectedInstance}
     <section class="mt-4">
-        <h2 class="text-sm font-semibold mb-2 opacity-60">Stats de <span class="font-bold">{selectedInstance.name}</span></h2>
+        <h2 class="text-sm font-semibold mb-2 opacity-60">Stats for <span class="font-bold">{selectedInstance.name}</span></h2>
         <div class="flex gap-3">
             <StatsCard name="Cpu" value={$stats.cpu} iconType="cpu"/>
             <StatsCard name="Ram" value={$stats.memory} iconType="ram"/>

@@ -1,33 +1,36 @@
 {
   "name": "backend",
-  "version": "1.2.0",
+  "version": "1.4.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "start": "node dist/index.js",
-    "build": "tsc"
+    "dev": "tsx watch src/presentation/hono/app.ts",
+    "start": "node dist/presentation/hono/app.js",
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "@hono/node-server": "^1.19.11",
-    "@hono/zod-validator": "^0.7.6",
-    "dockerode": "^4.0.9",
-    "hono": "^4.12.7",
+    "@hono/node-server": "1.19.11",
+    "@hono/zod-validator": "0.7.6",
+    "dockerode": "4.0.9",
+    "hono": "4.12.7",
     "lowdb": "^7.0.1",
-    "reflect-metadata": "^0.2.2",
-    "tsyringe": "^4.10.0",
-    "uuid": "^13.0.0",
-    "zod": "^4.3.6"
+    "reflect-metadata": "0.2.2",
+    "uuid": "13.0.0",
+    "zod": "4.3.6"
   },
   "devDependencies": {
-    "@types/dockerode": "^4.0.1",
-    "@types/node": "^25.5.0",
-    "nodemon": "^3.1.14",
-    "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "@types/dockerode": "4.0.1",
+    "@types/node": "25.5.0",
+    "nodemon": "3.1.14",
+    "tsx": "4.21.0",
+    "typescript": "5.9.3",
+    "vitest": "^4.1.4"
   }
 }
