@@ -26,6 +26,7 @@ export class DeleteInstanceUseCase implements IDeleteInstanceUseCase {
                 const network = this.networkRepository.getById(instance.networkId);
                 if (network) {
                     await this.dockerPort.disconnectContainer(network.dockerId, instance.containerId);
+                    this.networkRepository.detachContainer(network.id, instance.containerId);
                 }
             }
             await this.dockerPort.deleteInstance(instance.containerId, true, undefined);
@@ -44,6 +45,11 @@ export class DeleteInstanceUseCase implements IDeleteInstanceUseCase {
 
         await this.dockerPort.deleteInstance(instance.containerId, keepVolume, volumeName);
         this.instanceRepository.remove(instance.id);
+
+        const networks = this.networkRepository.getByContainerId(instance.containerId);
+        for (const network of networks) {
+            this.networkRepository.detachContainer(network.id, instance.containerId);
+        }
 
         if (volume !== undefined) {
             if (keepVolume) {

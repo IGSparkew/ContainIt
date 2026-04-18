@@ -20,7 +20,8 @@ export class DeleteNetworkController implements IController {
             const path = httpRequest.path as HttpRequestId;
             await this.deleteNetworkUseCase.execute(path.id);
             return this.httpSuccess.sucess_response();
-        } catch {
+        } catch (err) {
+            console.error('[DeleteNetwork]', err);
             return this.httpError.bad_request();
         }
     }
