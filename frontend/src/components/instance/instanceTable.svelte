@@ -4,6 +4,7 @@
     import InstanceToolbar from "./InstanceToolbar.svelte";
     import InstanceRow from "./instanceRow.svelte";
     import StatsCard from "../shared/StatsCard.svelte";
+    import InstanceConnectionInfo from "./InstanceConnectionInfo.svelte";
     import { openDeleteConfirmModal } from "../../stores/storeModal";
 
     const { isLoading, error, instancesIdToDelete, stats } = instanceStore
@@ -20,6 +21,10 @@
 
     const cantGetStats = $derived(
         selectedRows.length !== 1 || selectedInstance?.status === 'stopped'
+    )
+
+    const cantGetNetworks = $derived(
+        selectedRows.length !== 1
     )
 
     $effect(() => {
@@ -60,7 +65,7 @@
     </div>
 {/if}
 
-<InstanceToolbar onDelete={deleteInstances} {onStats} {cantGetStats} selectedRows={selectedRows} />
+<InstanceToolbar onDelete={deleteInstances} {cantGetNetworks} {onStats} {cantGetStats} selectedRows={selectedRows} />
 
 <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
     <table class="table">
@@ -73,6 +78,7 @@
                 <th>Status</th>
                 <th>Networks</th>
                 <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -82,6 +88,10 @@
         </tbody>
     </table>
 </div>
+
+{#if selectedRows.length === 1 && selectedInstance}
+    <InstanceConnectionInfo instance={selectedInstance} />
+{/if}
 
 {#if $stats !== null && selectedInstance}
     <section class="mt-4">
