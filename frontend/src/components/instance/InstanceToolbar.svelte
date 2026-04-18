@@ -17,14 +17,14 @@
 
     const { selectedRows, onDelete, onStats, cantGetStats, cantGetNetworks }: Props = $props();
 
-    // Réseaux auxquels l'instance sélectionnée est connectée
+    // Networks the selected instance is connected to
     const instanceNetworks = $derived(
         selectedRows.length === 1
             ? $networkStore.filter(n => n.instance.includes(selectedRows[0]))
             : []
     )
 
-    // Réseaux disponibles pour l'attach (ceux où l'instance n'est pas encore)
+    // Networks available for attach (those the instance is not yet part of)
     const availableNetworks = $derived(
         $networkStore.filter(n => !n.instance.includes(selectedRows[0]))
     )

@@ -17,11 +17,11 @@ export class DeleteInstanceUseCase implements IDeleteInstanceUseCase {
     async execute(id: string, keepVolume: boolean): Promise<void> {
         const instance = this.instanceRepository.getById(id);
         if (!instance) {
-            throw new Error(`Instance "${id}" introuvable`);
+            throw new Error(`Instance "${id}" not found`);
         }
 
         if (isAdminType(instance.type)) {
-            // --- Branche outil admin ---
+            // --- Admin tool branch ---
             if (instance.networkId) {
                 const network = this.networkRepository.getById(instance.networkId);
                 if (network) {
@@ -33,7 +33,7 @@ export class DeleteInstanceUseCase implements IDeleteInstanceUseCase {
             return;
         }
 
-        // --- Branche instance DB ---
+        // --- DB instance branch ---
         const volume = this.volumeRepository.getByContainerId(instance.containerId);
         const volumeName = volume !== undefined ? volume.name : undefined;
 

@@ -1,7 +1,7 @@
 import z from "zod"
 
 export const createNetworkSchema = z.object({
-    name: z.string().min(2).max(32).regex(/^[a-zA-Z0-9-_]+$/, "Uniquement lettres, chiffres, tirets et underscores"),
+    name: z.string().min(2).max(32).regex(/^[a-zA-Z0-9-_]+$/, "Only letters, digits, hyphens and underscores"),
     driver: z.enum(['bridge', 'overlay']).default('bridge')
 })
 

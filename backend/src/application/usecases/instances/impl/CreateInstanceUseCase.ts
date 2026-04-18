@@ -19,7 +19,7 @@ export class CreateInstanceUseCase implements ICreateInstanceUseCase {
     async execute(dto: CreateInstanceDTO): Promise<Instance> {
         const existing = this.instanceRepository.getAll().find(i => i.name === dto.name);
         if (existing) {
-            throw new Error(`Une instance avec le nom "${dto.name}" existe déjà`);
+            throw new Error(`An instance named "${dto.name}" already exists`);
         }
 
         if (isAdminType(dto.type)) {
@@ -31,12 +31,12 @@ export class CreateInstanceUseCase implements ICreateInstanceUseCase {
 
     private async createAdminTool(dto: CreateInstanceDTO): Promise<Instance> {
         if (!dto.networkId) {
-            throw new Error('Un réseau est requis pour créer un outil admin');
+            throw new Error('A network is required to create an admin tool');
         }
 
         const network = this.networkRepository.getById(dto.networkId);
         if (!network) {
-            throw new Error(`Réseau "${dto.networkId}" introuvable`);
+            throw new Error(`Network "${dto.networkId}" not found`);
         }
 
         const port = await this.dockerPort.findFreePort(10000);
@@ -47,7 +47,7 @@ export class CreateInstanceUseCase implements ICreateInstanceUseCase {
                 .getAll()
                 .find(i => i.type === 'mongo' && network.instance.includes(i.id));
             if (!mongoInstance) {
-                throw new Error('Aucune instance MongoDB trouvée sur ce réseau');
+                throw new Error('No MongoDB instance found on this network');
             }
             const mongoUrl = `mongodb://admin:${mongoInstance.password}@containit-${mongoInstance.name}:27017/?authSource=admin`;
             adminEnv = [
@@ -83,19 +83,19 @@ export class CreateInstanceUseCase implements ICreateInstanceUseCase {
 
     private async createDbInstance(dto: CreateInstanceDTO): Promise<Instance> {
         if (dto.port === undefined) {
-            throw new Error('Un port est requis pour créer une instance base de données');
+            throw new Error('A port is required to create a database instance');
         }
         if (!dto.password) {
-            throw new Error('Un mot de passe est requis pour créer une instance base de données');
+            throw new Error('A password is required to create a database instance');
         }
         if (dto.port < 1024 || dto.port > 65535) {
-            throw new Error(`Port ${dto.port} invalide — doit être entre 1024 et 65535`);
+            throw new Error(`Port ${dto.port} invalid — must be between 1024 and 65535`);
         }
         if (!SUPPORTED_DB_IMAGES.includes(dto.type as typeof SUPPORTED_DB_IMAGES[number])) {
-            throw new Error(`Type "${dto.type}" non supporté — valeurs acceptées : ${SUPPORTED_DB_IMAGES.join(', ')}`);
+            throw new Error(`Type "${dto.type}" not supported — accepted values: ${SUPPORTED_DB_IMAGES.join(', ')}`);
         }
         if (dto.password.length < 6) {
-            throw new Error('Mot de passe trop court — 6 caractères minimum');
+            throw new Error('Password too short — 6 characters minimum');
         }
 
         await this.dockerPort.checkPortAvailable(dto.port);
@@ -106,10 +106,10 @@ export class CreateInstanceUseCase implements ICreateInstanceUseCase {
         if (dto.volumeId !== undefined) {
             const orphanVolume = this.volumeRepository.getById(dto.volumeId);
             if (!orphanVolume) {
-                throw new Error(`Volume "${dto.volumeId}" introuvable`);
+                throw new Error(`Volume "${dto.volumeId}" not found`);
             }
             if (!orphanVolume.orphan) {
-                throw new Error(`Le volume "${dto.volumeId}" est déjà lié à une autre instance`);
+                throw new Error(`Volume "${dto.volumeId}" is already linked to another instance`);
             }
             createInstanceResult = await this.dockerPort.createInstance(dto, volumeId, true, orphanVolume.name);
             this.volumeRepository.linkVolume(orphanVolume.id, createInstanceResult.containerId);

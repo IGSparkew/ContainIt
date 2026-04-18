@@ -8,14 +8,14 @@ import { NetworkRouter } from './routers/networkRouter.js'
 import { serveStatic } from '@hono/node-server/serve-static'
 const app = new Hono()
 
-// Middleware global
+// Global middleware
 app.use('*', cors())
 
-// Gestion globale des erreurs
+// Global error handler
 app.onError((err, c) => {
   console.error(err)
   return c.json(
-    { error: err.message ?? 'Erreur interne du serveur' },
+    { error: err.message ?? 'Internal server error' },
     500
   )
 })
@@ -25,14 +25,14 @@ app.route('/api/volumes', VolumeRouter);
 app.route('/api/instances', InstanceRouter);
 app.route('/api/networks', NetworkRouter);
 
-// Sert les fichiers du frontend
+// Serve frontend static files
 app.use('/*', serveStatic({ root: './public' }))
 
-// Fallback SPA — toujours renvoyer index.html
+// SPA fallback — always return index.html
 app.get('/*', serveStatic({ path: './public/index.html' }))
 
-// Lancement du serveur
+// Start server
 serve(
   { fetch: app.fetch, port: 3000 },
-  () => console.log('Serveur démarré sur http://localhost:3000')
+  () => console.log('Server running on http://localhost:3000')
 )

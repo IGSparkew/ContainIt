@@ -50,7 +50,7 @@
 
 <section class="mt-4">
     <h2 class="text-sm font-semibold mb-2 opacity-60">
-        Connexion — <span class="font-bold">{instance.name}</span>
+        Connection — <span class="font-bold">{instance.name}</span>
     </h2>
 
     {#if isAdminType(instance.type)}
@@ -60,30 +60,30 @@
             <button
                 class="btn btn-xs {copiedKey === 'url' ? 'btn-success' : 'btn-ghost'}"
                 onclick={() => copy('url', `http://localhost:${instance.port}`)}
-            >{copiedKey === 'url' ? 'Copié !' : 'Copier'}</button>
+            >{copiedKey === 'url' ? 'Copied!' : 'Copy'}</button>
             <a
                 href="http://localhost:{instance.port}"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="btn btn-sm btn-secondary"
-            >Ouvrir</a>
+            >Open</a>
         </div>
     {:else}
         <div class="grid grid-cols-2 gap-3">
 
-            <!-- Depuis la machine hôte -->
+            <!-- From host machine -->
             <div class="rounded-box border border-base-content/5 bg-base-100 overflow-hidden">
-                <div class="px-3 pt-2 pb-1 text-xs font-semibold opacity-50 uppercase tracking-wide">Depuis votre machine</div>
+                <div class="px-3 pt-2 pb-1 text-xs font-semibold opacity-50 uppercase tracking-wide">From your machine</div>
                 <table class="table table-sm">
                     <tbody>
                         <tr>
-                            <td class="opacity-60 w-24">Hôte</td>
+                            <td class="opacity-60 w-24">Host</td>
                             <td><code>localhost</code></td>
                             <td>
                                 <button
                                     class="btn btn-xs {copiedKey === 'ext-host' ? 'btn-success' : 'btn-ghost'}"
                                     onclick={() => copy('ext-host', 'localhost')}
-                                >{copiedKey === 'ext-host' ? 'Copié !' : 'Copier'}</button>
+                                >{copiedKey === 'ext-host' ? 'Copied!' : 'Copy'}</button>
                             </td>
                         </tr>
                         <tr>
@@ -93,7 +93,7 @@
                                 <button
                                     class="btn btn-xs {copiedKey === 'ext-port' ? 'btn-success' : 'btn-ghost'}"
                                     onclick={() => copy('ext-port', String(instance.port))}
-                                >{copiedKey === 'ext-port' ? 'Copié !' : 'Copier'}</button>
+                                >{copiedKey === 'ext-port' ? 'Copied!' : 'Copy'}</button>
                             </td>
                         </tr>
                         {#if user}
@@ -104,7 +104,7 @@
                                     <button
                                         class="btn btn-xs {copiedKey === 'ext-user' ? 'btn-success' : 'btn-ghost'}"
                                         onclick={() => copy('ext-user', user!)}
-                                    >{copiedKey === 'ext-user' ? 'Copié !' : 'Copier'}</button>
+                                    >{copiedKey === 'ext-user' ? 'Copied!' : 'Copy'}</button>
                                 </td>
                             </tr>
                         {/if}
@@ -113,12 +113,12 @@
                             <td><code>{showPassword ? instance.password : '••••••••'}</code></td>
                             <td class="flex gap-1">
                                 <button class="btn btn-xs btn-ghost" onclick={() => showPassword = !showPassword}>
-                                    {showPassword ? 'Masquer' : 'Voir'}
+                                    {showPassword ? 'Hide' : 'Show'}
                                 </button>
                                 <button
                                     class="btn btn-xs {copiedKey === 'pwd' ? 'btn-success' : 'btn-ghost'}"
                                     onclick={() => copy('pwd', instance.password)}
-                                >{copiedKey === 'pwd' ? 'Copié !' : 'Copier'}</button>
+                                >{copiedKey === 'pwd' ? 'Copied!' : 'Copy'}</button>
                             </td>
                         </tr>
                         {#if externalConnectionString}
@@ -131,7 +131,7 @@
                                     <button
                                         class="btn btn-xs {copiedKey === 'ext-url' ? 'btn-success' : 'btn-ghost'}"
                                         onclick={() => copy('ext-url', externalConnectionString)}
-                                    >{copiedKey === 'ext-url' ? 'Copié !' : 'Copier'}</button>
+                                    >{copiedKey === 'ext-url' ? 'Copied!' : 'Copy'}</button>
                                 </td>
                             </tr>
                         {/if}
@@ -139,19 +139,19 @@
                 </table>
             </div>
 
-            <!-- Depuis un outil admin dans Docker -->
+            <!-- From an admin tool in Docker -->
             <div class="rounded-box border border-base-content/5 bg-base-100 overflow-hidden">
-                <div class="px-3 pt-2 pb-1 text-xs font-semibold opacity-50 uppercase tracking-wide">Depuis Docker</div>
+                <div class="px-3 pt-2 pb-1 text-xs font-semibold opacity-50 uppercase tracking-wide">From Docker</div>
                 <table class="table table-sm">
                     <tbody>
                         <tr>
-                            <td class="opacity-60 w-24">Hôte</td>
+                            <td class="opacity-60 w-24">Host</td>
                             <td><code>{dockerHost}</code></td>
                             <td>
                                 <button
                                     class="btn btn-xs {copiedKey === 'docker-host' ? 'btn-success' : 'btn-ghost'}"
                                     onclick={() => copy('docker-host', dockerHost)}
-                                >{copiedKey === 'docker-host' ? 'Copié !' : 'Copier'}</button>
+                                >{copiedKey === 'docker-host' ? 'Copied!' : 'Copy'}</button>
                             </td>
                         </tr>
                         <tr>
@@ -161,7 +161,7 @@
                                 <button
                                     class="btn btn-xs {copiedKey === 'docker-port' ? 'btn-success' : 'btn-ghost'}"
                                     onclick={() => copy('docker-port', String(internalPort))}
-                                >{copiedKey === 'docker-port' ? 'Copié !' : 'Copier'}</button>
+                                >{copiedKey === 'docker-port' ? 'Copied!' : 'Copy'}</button>
                             </td>
                         </tr>
                         {#if user}
@@ -172,7 +172,7 @@
                                     <button
                                         class="btn btn-xs {copiedKey === 'docker-user' ? 'btn-success' : 'btn-ghost'}"
                                         onclick={() => copy('docker-user', user!)}
-                                    >{copiedKey === 'docker-user' ? 'Copié !' : 'Copier'}</button>
+                                    >{copiedKey === 'docker-user' ? 'Copied!' : 'Copy'}</button>
                                 </td>
                             </tr>
                         {/if}
@@ -181,12 +181,12 @@
                             <td><code>{showPassword ? instance.password : '••••••••'}</code></td>
                             <td class="flex gap-1">
                                 <button class="btn btn-xs btn-ghost" onclick={() => showPassword = !showPassword}>
-                                    {showPassword ? 'Masquer' : 'Voir'}
+                                    {showPassword ? 'Hide' : 'Show'}
                                 </button>
                                 <button
                                     class="btn btn-xs {copiedKey === 'pwd' ? 'btn-success' : 'btn-ghost'}"
                                     onclick={() => copy('pwd', instance.password)}
-                                >{copiedKey === 'pwd' ? 'Copié !' : 'Copier'}</button>
+                                >{copiedKey === 'pwd' ? 'Copied!' : 'Copy'}</button>
                             </td>
                         </tr>
                         {#if dockerConnectionString}
@@ -199,7 +199,7 @@
                                     <button
                                         class="btn btn-xs {copiedKey === 'docker-url' ? 'btn-success' : 'btn-ghost'}"
                                         onclick={() => copy('docker-url', dockerConnectionString)}
-                                    >{copiedKey === 'docker-url' ? 'Copié !' : 'Copier'}</button>
+                                    >{copiedKey === 'docker-url' ? 'Copied!' : 'Copy'}</button>
                                 </td>
                             </tr>
                         {/if}
