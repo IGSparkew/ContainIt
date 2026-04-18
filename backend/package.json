@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "tsx watch src/presentation/hono/app.ts",
     "start": "node dist/presentation/hono/app.js",
-    "build": "tsc"
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +30,7 @@
     "@types/node": "25.5.0",
     "nodemon": "3.1.14",
     "tsx": "4.21.0",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vitest": "^4.1.4"
   }
 }
