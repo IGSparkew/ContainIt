@@ -1,4 +1,3 @@
-import { injectable } from 'tsyringe'
 import Dockerode from 'dockerode'
 import * as net from 'net'
 
@@ -15,7 +14,6 @@ import { DB_DATA_PATHS, ADMIN_TOOL_CONFIG, CONTAINIT_PREFIX, DB_ENV_VARS, DB_IMA
  * Wraps the Dockerode client and exposes all Docker operations
  * required by the application use cases.
  */
-@injectable()
 export class DockerPort implements IDockerPort {
     private docker: Dockerode
 
