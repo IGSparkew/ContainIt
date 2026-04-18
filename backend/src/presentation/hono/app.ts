@@ -3,6 +3,8 @@ import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { VolumeRouter } from './routers/volumeRouter.js'
+import { InstanceRouter } from './routers/instanceRouter.js'
+import { NetworkRouter } from './routers/networkRouter.js'
 import { serveStatic } from '@hono/node-server/serve-static'
 const app = new Hono()
 
@@ -19,8 +21,9 @@ app.onError((err, c) => {
 })
 
 // Routes
-
 app.route('/api/volumes', VolumeRouter);
+app.route('/api/instances', InstanceRouter);
+app.route('/api/networks', NetworkRouter);
 
 // Sert les fichiers du frontend
 app.use('/*', serveStatic({ root: './public' }))

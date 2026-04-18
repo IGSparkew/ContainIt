@@ -9,5 +9,11 @@ export const attachContainerSchema = z.object({
     instanceId: z.string().nonempty()
 })
 
+export const detachContainerPathSchema = z.object({
+    id: z.string(),
+    instanceId: z.string()
+})
+
 export type CreateNetworkInput = z.infer<typeof createNetworkSchema>
 export type AttachContainerInput = z.infer<typeof attachContainerSchema>
+export type DetachContainerPath = z.infer<typeof detachContainerPathSchema>
