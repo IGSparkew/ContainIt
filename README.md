@@ -116,11 +116,11 @@ Browser → Svelte stores / API clients
 
 Data is persisted in `data/db.json`, which is bind-mounted in Docker so it survives container restarts.
 
----
-
 ## Links
 
 - [Docker Hub](https://hub.docker.com/r/sparkew/containit)
+
+---
 
 **Author:** [IGSparkew](https://github.com/IGSparkew)
 
