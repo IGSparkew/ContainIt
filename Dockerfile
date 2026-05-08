@@ -41,4 +41,4 @@ RUN apk add --no-cache docker-cli
 
 EXPOSE 3000
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "dist/presentation/hono/app.js"]
